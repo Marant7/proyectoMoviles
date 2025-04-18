@@ -5,6 +5,7 @@ import 'package:flutter_jueguito/games/juego_4.dart';
 import 'package:flutter_jueguito/games/juego_6.dart';
 import 'package:flutter_jueguito/games/juego_7.dart';
 import 'package:flutter_jueguito/games/juego_7.dart';
+import 'package:flutter_jueguito/games/juego_8.dart';
 import 'package:flutter_jueguito/games/juego_9.dart' hide Juego_2;
 import 'package:flutter_jueguito/games/juego_10.dart';
 import 'package:flutter_jueguito/games/juego_2.dart';
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mis Juegos',
       debugShowCheckedModeBanner: false,
-      home: JuegoImagenTextoNumero(),
+      home: JuegoNumeroATexto(),
     );
   }
 }

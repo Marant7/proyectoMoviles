@@ -8,7 +8,14 @@ class JuegoNumeroATexto extends StatefulWidget {
 
 class _JuegoNumeroATextoState extends State<JuegoNumeroATexto> {
   final List<String> alternativas = [
-    'carta', 'cerdo', 'arco', 'tortuga', 'ardilla', 'martillo', 'compás', 'teléfono'
+    'carta',
+    'cerdo',
+    'arco',
+    'tortuga',
+    'ardilla',
+    'martillo',
+    'compás',
+    'teléfono',
   ];
 
   final List<String> imagenes = [
@@ -37,23 +44,29 @@ class _JuegoNumeroATextoState extends State<JuegoNumeroATexto> {
 
     for (var palabra in numerosConPalabra.values) {
       int? numeroAsignado = respuestasUsuario[palabra];
-      if (numeroAsignado == null || numerosConPalabra[numeroAsignado] != palabra) {
+      if (numeroAsignado == null ||
+          numerosConPalabra[numeroAsignado] != palabra) {
         todasCorrectas = false;
         break;
       }
     }
 
-    if (respuestasUsuario['compás'] != null || respuestasUsuario['teléfono'] != null) {
+    if (respuestasUsuario['compás'] != null ||
+        respuestasUsuario['teléfono'] != null) {
       todasCorrectas = false;
     }
 
     setState(() => desbloqueado = todasCorrectas);
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(todasCorrectas
-          ? '¡Todas las respuestas son correctas! 🎉'
-          : 'Hay errores. Intenta nuevamente ❌'),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          todasCorrectas
+              ? '¡Todas las respuestas son correctas! 🎉'
+              : 'Hay errores. Intenta nuevamente ❌',
+        ),
+      ),
+    );
   }
 
   void irAlSiguienteJuego() {
@@ -67,7 +80,10 @@ class _JuegoNumeroATextoState extends State<JuegoNumeroATexto> {
     final String rutaImagen = imagenes[numero - 1];
 
     return Container(
-      margin: EdgeInsets.all(6),
+      margin: EdgeInsets.symmetric(
+        vertical: 22,
+        horizontal: 16,
+      ), // antes era all(6)
       child: Column(
         children: [
           Stack(
@@ -118,62 +134,68 @@ class _JuegoNumeroATextoState extends State<JuegoNumeroATexto> {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
-          )
+          ),
         ],
       ),
     );
   }
 
   Widget alternativaTexto(String palabra) {
-    final numeroAsignado = respuestasUsuario[palabra];
+  final numeroAsignado = respuestasUsuario[palabra];
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          DragTarget<int>(
-            onAccept: (numero) {
-              setState(() {
-                respuestasUsuario[palabra] = numero;
-              });
-            },
-            builder: (context, candidateData, rejectedData) {
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    respuestasUsuario[palabra] = null;
-                  });
-                },
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.blue),
-                    color: numeroAsignado != null
-                        ? Colors.blue[100]
-                        : Colors.transparent,
-                  ),
-                  alignment: Alignment.center,
-                  child: numeroAsignado != null
-                      ? Text(
-                          numeroAsignado.toString(),
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )
-                      : null,
+  return Container(
+    width: 120, // Ancho fijo para alinear todos los ítems igual
+    margin: const EdgeInsets.symmetric(vertical: 10),
+    child: Row(
+      children: [
+        DragTarget<int>(
+          onAccept: (numero) {
+            setState(() {
+              respuestasUsuario[palabra] = numero;
+            });
+          },
+          builder: (context, candidateData, rejectedData) {
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  respuestasUsuario[palabra] = null;
+                });
+              },
+              child: Container(
+                width: 40, // Tamaño del círculo
+                height: 40,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.blue),
+                  color: numeroAsignado != null
+                      ? Colors.blue[100]
+                      : Colors.transparent,
                 ),
-              );
-            },
+                alignment: Alignment.center,
+                child: numeroAsignado != null
+                    ? Text(
+                        numeroAsignado.toString(),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      )
+                    : null,
+              ),
+            );
+          },
+        ),
+        SizedBox(width: 16),
+        Expanded(
+          child: Text(
+            palabra,
+            style: TextStyle(fontSize: 16),
           ),
-          SizedBox(width: 10),
-          Text(palabra, style: TextStyle(fontSize: 16)),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +219,8 @@ class _JuegoNumeroATextoState extends State<JuegoNumeroATexto> {
                 // Alternativas al centro
                 Expanded(
                   child: Column(
-                    children: alternativas.map((e) => alternativaTexto(e)).toList(),
+                    children:
+                        alternativas.map((e) => alternativaTexto(e)).toList(),
                   ),
                 ),
                 // 3 imágenes a la derecha
@@ -221,33 +244,36 @@ class _JuegoNumeroATextoState extends State<JuegoNumeroATexto> {
                 SizedBox(width: 16),
                 desbloqueado
                     ? ElevatedButton(
-                        onPressed: irAlSiguienteJuego,
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                        child: Text('Siguiente juego'),
-                      )
+                      onPressed: irAlSiguienteJuego,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                      ),
+                      child: Text('Siguiente juego'),
+                    )
                     : Opacity(
-                        opacity: 0.4,
-                        child: IgnorePointer(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.lock),
-                                SizedBox(width: 8),
-                                Text('Siguiente juego'),
-                              ],
-                            ),
+                      opacity: 0.4,
+                      child: IgnorePointer(
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.lock),
+                              SizedBox(width: 8),
+                              Text('Siguiente juego'),
+                            ],
                           ),
                         ),
                       ),
+                    ),
               ],
-            )
+            ),
           ],
         ),
       ),
     );
   }
 }
-
