@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mis Juegos',
       debugShowCheckedModeBanner: false,
-      home: JuegoConDosImagenes2(),
+      home: JuegoFrasesAImagen(),
     );
   }
 }

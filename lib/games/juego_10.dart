@@ -136,8 +136,10 @@ class _JuegoFrasesAImagenState extends State<JuegoFrasesAImagen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            Wrap(
+              spacing: 20,
+              runSpacing: 20,
+              alignment: WrapAlignment.center,
               children: List.generate(3, (i) => buildImagenConDrop(i)),
             ),
             SizedBox(height: 20),
@@ -147,20 +149,23 @@ class _JuegoFrasesAImagenState extends State<JuegoFrasesAImagen> {
             ),
             ...frases.map(buildFraseDraggable),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: verificar,
-              child: Text('Verificar respuestas'),
-            ),
-            SizedBox(height: 12),
-            desbloqueado
-                ? ElevatedButton(
-                  onPressed: irAlSiguienteJuego, // ✅ Aquí está el cambio
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                  ),
-                  child: Text('Siguiente juego'),
-                )
-                : Container(),
+            Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    ElevatedButton(
+      onPressed: verificar,
+      child: Text('Verificar respuestas'),
+    ),
+    SizedBox(width: 16),
+    if (desbloqueado)
+      ElevatedButton(
+        onPressed: irAlSiguienteJuego,
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+        child: Text('Siguiente nivel'),
+      ),
+  ],
+),
+
           ],
         ),
       ),
