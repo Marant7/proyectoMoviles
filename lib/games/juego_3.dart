@@ -174,7 +174,7 @@ class _JuegoDragDrop2State extends State<JuegoDragDrop3> {
               ),
               child: Text(
                 img.respuestaUsuario ?? 'Arrastra aquí',
-                style: TextStyle(fontSize: 16),
+                style: TextStyle(fontSize: 13),
               ),
             );
           },

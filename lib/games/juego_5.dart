@@ -81,10 +81,12 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
                     ),
                   ),
                   Expanded(
+                    child: Padding(
+                    padding: const EdgeInsets.only(left: 25), // Aumenta este valor si quieres más desplazamiento
                     child: Column(
                       children: opciones.map((op) {
                         return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           child: Draggable<int>(
                             data: op['numero'],
                             feedback: Material(
@@ -100,6 +102,7 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
                         );
                       }).toList(),
                     ),
+                  ),
                   ),
                   Expanded(
                     child: Column(

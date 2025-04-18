@@ -165,7 +165,7 @@ class _JuegoDragDropState extends State<Juego_2> {
       children:
           options.map((word) {
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              padding: const EdgeInsets.symmetric(vertical: 2.0),
               child: Draggable<String>(
                 data: word,
                 feedback: Material(
