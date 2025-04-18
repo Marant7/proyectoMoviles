@@ -184,11 +184,9 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes2> {
         ],
       ),
       child: Center(
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 8,
-          runSpacing: 8,
-          children: opciones.map((palabra) {
+        child: Column(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: opciones.map((palabra) {
             return Draggable<String>(
               data: palabra,
               feedback: Material(
