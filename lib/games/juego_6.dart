@@ -8,46 +8,14 @@ class JuegoArrastraNumero extends StatefulWidget {
 
 class _JuegoArrastraNumeroState extends State<JuegoArrastraNumero> {
   final List<Map<String, dynamic>> data = [
-    {
-      'imagen': 'assets/images/silla.png',
-      'numero': 1,
-      'palabra': 'silla',
-    },
-    {
-      'imagen': 'assets/images/pollo.png',
-      'numero': 2,
-      'palabra': 'pollo',
-    },
-    {
-      'imagen': 'assets/images/olla.png',
-      'numero': 3,
-      'palabra': 'olla',
-    },
-    {
-      'imagen': 'assets/images/camello.png',
-      'numero': 4,
-      'palabra': 'camello',
-    },
-    {
-      'imagen': 'assets/images/cepillo.png',
-      'numero': 5,
-      'palabra': 'cepillo',
-    },
-    {
-      'imagen': 'assets/images/gallo.png',
-      'numero': 6,
-      'palabra': 'gallo',
-    },
-    {
-      'imagen': 'assets/images/ballena.png',
-      'numero': 7,
-      'palabra': 'ballena',
-    },
-    {
-      'imagen': 'assets/images/caballo.png',
-      'numero': 8,
-      'palabra': 'caballo',
-    },
+    {'imagen': 'assets/images/silla.png', 'numero': 1, 'palabra': 'silla'},
+    {'imagen': 'assets/images/pollo.png', 'numero': 2, 'palabra': 'pollo'},
+    {'imagen': 'assets/images/olla.png', 'numero': 3, 'palabra': 'olla'},
+    {'imagen': 'assets/images/camello.png', 'numero': 4, 'palabra': 'camello'},
+    {'imagen': 'assets/images/cepillo.png', 'numero': 5, 'palabra': 'cepillo'},
+    {'imagen': 'assets/images/gallo.png', 'numero': 6, 'palabra': 'gallo'},
+    {'imagen': 'assets/images/ballena.png', 'numero': 7, 'palabra': 'ballena'},
+    {'imagen': 'assets/images/caballo.png', 'numero': 8, 'palabra': 'caballo'},
   ];
 
   final List<String> alternativas = [
@@ -59,7 +27,7 @@ class _JuegoArrastraNumeroState extends State<JuegoArrastraNumero> {
     'gallo',
     'ballena',
     'caballo',
-    'embudo', // palabra distractora
+    'embudo', // distractora
   ];
 
   Map<String, int?> respuestasUsuario = {};
@@ -78,7 +46,6 @@ class _JuegoArrastraNumeroState extends State<JuegoArrastraNumero> {
       }
     }
 
-    // Que la distractora no tenga número
     for (var palabra in respuestasUsuario.keys) {
       if (!data.any((d) => d['palabra'] == palabra)) {
         if (respuestasUsuario[palabra] != null) {
@@ -124,11 +91,15 @@ class _JuegoArrastraNumeroState extends State<JuegoArrastraNumero> {
                       buildImagenConNumero(item['imagen'], item['numero']))
                   .toList(),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 12),
             Text('Alternativas',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            Column(children: buildAlternativas()),
+            Wrap(
+              spacing: 32,
+              runSpacing: 16,
+              children: buildAlternativas(),
+            ),
           ],
         ),
       ),
@@ -208,70 +179,69 @@ class _JuegoArrastraNumeroState extends State<JuegoArrastraNumero> {
   }
 
   List<Widget> buildAlternativas() {
-  return alternativas.map((palabra) {
-    final asignado = respuestasUsuario[palabra];
+    return alternativas.map((palabra) {
+      final asignado = respuestasUsuario[palabra];
 
-    final Map<String, dynamic>? palabraCorrecta = data.firstWhere(
-      (element) => element['palabra'] == palabra,
-      orElse: () => {},
-    );
+      final Map<String, dynamic>? palabraCorrecta = data.firstWhere(
+        (element) => element['palabra'] == palabra,
+        orElse: () => {},
+      );
 
-    final esCorrecta = palabraCorrecta != null &&
-        asignado == palabraCorrecta['numero'];
+      final esCorrecta = palabraCorrecta != null &&
+          asignado == palabraCorrecta['numero'];
 
-    Color? colorFondo;
-    if (asignado != null && desbloqueado) {
-      colorFondo = esCorrecta ? Colors.green[100] : Colors.red[100];
-    } else if (asignado != null) {
-      colorFondo = Colors.blue[100];
-    }
+      Color? colorFondo;
+      if (asignado != null && desbloqueado) {
+        colorFondo = esCorrecta ? Colors.green[100] : Colors.red[100];
+      } else if (asignado != null) {
+        colorFondo = Colors.blue[100];
+      }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () {
-              if (asignado != null) {
-                setState(() {
-                  respuestasUsuario[palabra] = null;
-                });
-              }
-            },
-            child: DragTarget<int>(
-              onAccept: (numero) {
-                setState(() {
-                  respuestasUsuario[palabra] = numero;
-                });
+      return ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 160),
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                if (asignado != null) {
+                  setState(() {
+                    respuestasUsuario[palabra] = null;
+                  });
+                }
               },
-              builder: (context, candidateData, rejectedData) {
-                return Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.blue),
-                    color: colorFondo ?? Colors.transparent,
-                  ),
-                  alignment: Alignment.center,
-                  child: asignado != null
-                      ? Text(
-                          asignado.toString(),
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )
-                      : null,
-                );
-              },
+              child: DragTarget<int>(
+                onAccept: (numero) {
+                  setState(() {
+                    respuestasUsuario[palabra] = numero;
+                  });
+                },
+                builder: (context, candidateData, rejectedData) {
+                  return Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.blue),
+                      color: colorFondo ?? Colors.transparent,
+                    ),
+                    alignment: Alignment.center,
+                    child: asignado != null
+                        ? Text(
+                            asignado.toString(),
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          )
+                        : null,
+                  );
+                },
+              ),
             ),
-          ),
-          SizedBox(width: 8),
-          Text(palabra, style: TextStyle(fontSize: 16)),
-        ],
-      ),
-    );
-  }).toList();
-}
-
+            SizedBox(width: 8),
+            Text(palabra, style: TextStyle(fontSize: 16)),
+          ],
+        ),
+      );
+    }).toList();
+  }
 
   Widget numeroCirculo(int numero, {bool dragging = false}) {
     return Container(

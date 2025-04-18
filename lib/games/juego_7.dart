@@ -107,24 +107,20 @@ class _JuegoImagenTextoNumeroState extends State<JuegoImagenTextoNumero> {
     );
   }
 
-  Widget buildAlternativas(List<String> opciones) {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: opciones.map((palabra) {
-        int numero = alternativas.indexOf(palabra) + 1;
-        return Draggable<String>(
-          data: palabra,
-          feedback: Material(
-            color: Colors.transparent,
-            child: palabraArrastrable(palabra, numero, dragging: true),
-          ),
-          childWhenDragging:
-              Opacity(opacity: 0.4, child: palabraArrastrable(palabra, numero)),
-          child: palabraArrastrable(palabra, numero),
-        );
-      }).toList(),
-    );
+  List<Widget> buildAlternativas(List<String> opciones) {
+    return opciones.map((palabra) {
+      int numero = alternativas.indexOf(palabra) + 1;
+      return Draggable<String>(
+        data: palabra,
+        feedback: Material(
+          color: Colors.transparent,
+          child: palabraArrastrable(palabra, numero, dragging: true),
+        ),
+        childWhenDragging:
+            Opacity(opacity: 0.4, child: palabraArrastrable(palabra, numero)),
+        child: palabraArrastrable(palabra, numero),
+      );
+    }).toList();
   }
 
   Widget palabraArrastrable(String palabra, int numero, {bool dragging = false}) {
@@ -139,74 +135,74 @@ class _JuegoImagenTextoNumeroState extends State<JuegoImagenTextoNumero> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Juego: Asocia número con imagen')),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [buildImagenConDrop(0), buildImagenConDrop(1), buildImagenConDrop(2)],
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(title: Text('Juego: Asocia número con imagen')),
+    body: SingleChildScrollView(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text('Arrastra el número a la imagen correcta',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 16),
+          Wrap(
+            spacing: 10,
+            runSpacing: 5,
+            alignment: WrapAlignment.center,
+            children: List.generate(
+              imagenes.length,
+              (index) => buildImagenConDrop(index),
             ),
-            SizedBox(height: 20),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                buildImagenConDrop(3),
-                Expanded(child: Center(child: buildAlternativas(alternativas.sublist(0, 3)))),
-                buildImagenConDrop(4),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                buildImagenConDrop(5),
-                Expanded(child: Center(child: buildAlternativas(alternativas.sublist(3, 7)))),
-                buildImagenConDrop(6),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: verificar,
-                  child: Text('Verificar respuestas'),
-                ),
-                SizedBox(width: 16),
-                desbloqueado
-                    ? ElevatedButton(
-                        onPressed: irAlSiguienteJuego,
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                        child: Text('Siguiente juego'),
-                      )
-                    : Opacity(
-                        opacity: 0.4,
-                        child: IgnorePointer(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.lock),
-                                SizedBox(width: 8),
-                                Text('Siguiente juego'),
-                              ],
-                            ),
+          ),
+          SizedBox(height: 12),
+          Text('Alternativas',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 16),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            alignment: WrapAlignment.center,
+            children: buildAlternativas(alternativas),
+          ),
+          SizedBox(height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: verificar,
+                child: Text('Verificar respuestas'),
+              ),
+              SizedBox(width: 16),
+              desbloqueado
+                  ? ElevatedButton(
+                      onPressed: irAlSiguienteJuego,
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                      child: Text('Siguiente juego'),
+                    )
+                  : Opacity(
+                      opacity: 0.4,
+                      child: IgnorePointer(
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.lock),
+                              SizedBox(width: 8),
+                              Text('Siguiente juego'),
+                            ],
                           ),
                         ),
                       ),
-              ],
-            ),
-          ],
-        ),
+                    ),
+            ],
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
