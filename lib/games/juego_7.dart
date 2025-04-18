@@ -1,38 +1,54 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_jueguito/games/juego_7.dart';
+import 'package:flutter_jueguito/games/juego_8.dart';
 
-class JuegoNumeroATexto extends StatefulWidget {
+class JuegoImagenTextoNumero extends StatefulWidget {
   @override
-  State<JuegoNumeroATexto> createState() => _JuegoNumeroATextoState();
+  State<JuegoImagenTextoNumero> createState() => _JuegoImagenTextoNumeroState();
 }
 
-class _JuegoNumeroATextoState extends State<JuegoNumeroATexto> {
+class _JuegoImagenTextoNumeroState extends State<JuegoImagenTextoNumero> {
   final List<String> alternativas = [
-    'campana', 'tambor', 'lupa', 'bombilla', 'rueda', 'lámpara', 'compás', 'teléfono'
+    'barre', 'huele', 'juega',
+    'escribe', 'observa', 'estudia', 'plancha'
   ];
 
-  final Map<int, String> numerosConPalabra = {
-    1: 'campana',
-    2: 'tambor',
-    3: 'lupa',
-    4: 'bombilla',
-    5: 'rueda',
-    6: 'lámpara'
-  };
+  final List<String> imagenes = [
+    'assets/images/barre.png',
+    'assets/images/huele.png',
+    'assets/images/juega.png',
+    'assets/images/escribe.png',
+    'assets/images/observa.png',
+    'assets/images/estudia.png',
+    'assets/images/plancha.png',
+  ];
 
-  Map<String, int?> respuestasUsuario = {};
+  Map<int, String?> respuestas = {}; // key: índice imagen, value: palabra
   bool desbloqueado = false;
+
+  final Map<int, String> respuestasCorrectas = {
+    0: 'barre',
+    1: 'huele',
+    2: 'juega',
+    3: 'escribe',
+    4: 'observa',
+    5: 'estudia',
+    6: 'plancha',
+  };
 
   void verificar() {
     bool todasCorrectas = true;
-    for (var palabra in numerosConPalabra.values) {
-      if (respuestasUsuario[palabra] != null &&
-          numerosConPalabra[respuestasUsuario[palabra]] != palabra) {
+
+    for (int i = 0; i < respuestasCorrectas.length; i++) {
+      if (respuestas[i] != respuestasCorrectas[i]) {
         todasCorrectas = false;
         break;
       }
     }
 
-    setState(() => desbloqueado = todasCorrectas);
+    setState(() {
+      desbloqueado = todasCorrectas;
+    });
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(todasCorrectas
@@ -44,142 +60,117 @@ class _JuegoNumeroATextoState extends State<JuegoNumeroATexto> {
   void irAlSiguienteJuego() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => JuegoSiguiente()),
+      MaterialPageRoute(builder: (_) => JuegoNumeroATexto()),
     );
   }
 
-  Widget imagenConNumero(int numero) {
+  Widget buildImagenConDrop(int index) {
     return Column(
       children: [
-        Stack(
-          alignment: Alignment.topRight,
-          children: [
-            Container(
-              width: 90,
-              height: 90,
-              margin: EdgeInsets.all(8),
+        Container(
+          width: 90,
+          height: 90,
+          margin: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Image.asset(imagenes[index], fit: BoxFit.contain),
+        ),
+        DragTarget<String>(
+          onAccept: (data) {
+            setState(() {
+              respuestas[index] = data;
+            });
+          },
+          builder: (context, candidateData, rejectedData) {
+            return Container(
+              width: 60,
+              height: 40,
+              margin: EdgeInsets.only(bottom: 12),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(12),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.blue),
+                color: respuestas[index] != null ? Colors.blue[100] : Colors.transparent,
               ),
-              child: Image.asset('assets/images/trompo.png', fit: BoxFit.contain),
-            ),
-            Positioned(
-              right: 12,
-              top: 8,
-              child: Draggable<int>(
-                data: numero,
-                feedback: Material(
-                  color: Colors.transparent,
-                  child: Text('$numero',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: Colors.orange)),
-                ),
-                childWhenDragging: Opacity(
-                  opacity: 0.3,
-                  child: Text('$numero',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 18)),
-                ),
-                child: Text('$numero',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: Colors.deepOrange)),
-              ),
-            )
-          ],
+              alignment: Alignment.center,
+              child: respuestas[index] != null
+                  ? Text(
+                      (alternativas.indexOf(respuestas[index]!) + 1).toString(),
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )
+                  : null,
+            );
+          },
         )
       ],
     );
   }
 
-  Widget alternativaTexto(String palabra) {
-    final numeroAsignado = respuestasUsuario[palabra];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          DragTarget<int>(
-            onAccept: (numero) {
-              setState(() {
-                respuestasUsuario[palabra] = numero;
-              });
-            },
-            builder: (context, candidateData, rejectedData) {
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    respuestasUsuario[palabra] = null;
-                  });
-                },
-                child: Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.blue),
-                    color: numeroAsignado != null
-                        ? Colors.blue[100]
-                        : Colors.transparent,
-                  ),
-                  alignment: Alignment.center,
-                  child: numeroAsignado != null
-                      ? Text(
-                          numeroAsignado.toString(),
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        )
-                      : null,
-                ),
-              );
-            },
+  Widget buildAlternativas(List<String> opciones) {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: opciones.map((palabra) {
+        int numero = alternativas.indexOf(palabra) + 1;
+        return Draggable<String>(
+          data: palabra,
+          feedback: Material(
+            color: Colors.transparent,
+            child: palabraArrastrable(palabra, numero, dragging: true),
           ),
-          SizedBox(width: 10),
-          Text(palabra, style: TextStyle(fontSize: 16))
-        ],
+          childWhenDragging:
+              Opacity(opacity: 0.4, child: palabraArrastrable(palabra, numero)),
+          child: palabraArrastrable(palabra, numero),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget palabraArrastrable(String palabra, int numero, {bool dragging = false}) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: dragging ? Colors.orange[300] : Colors.orange[100],
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.orange),
       ),
+      child: Text('$numero. $palabra', style: TextStyle(fontSize: 16)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Juego: Arrastra el número al texto')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      appBar: AppBar(title: Text('Juego: Asocia número con imagen')),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [buildImagenConDrop(0), buildImagenConDrop(1), buildImagenConDrop(2)],
+            ),
+            SizedBox(height: 20),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Column(
-                  children: [
-                    imagenConNumero(1),
-                    imagenConNumero(2),
-                    imagenConNumero(3),
-                  ],
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    children:
-                        alternativas.map((e) => alternativaTexto(e)).toList(),
-                  ),
-                ),
-                SizedBox(width: 12),
-                Column(
-                  children: [
-                    imagenConNumero(4),
-                    imagenConNumero(5),
-                    imagenConNumero(6),
-                  ],
-                ),
+                buildImagenConDrop(3),
+                Expanded(child: Center(child: buildAlternativas(alternativas.sublist(0, 3)))),
+                buildImagenConDrop(4),
               ],
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 20),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                buildImagenConDrop(5),
+                Expanded(child: Center(child: buildAlternativas(alternativas.sublist(3, 7)))),
+                buildImagenConDrop(6),
+              ],
+            ),
+            SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -212,20 +203,10 @@ class _JuegoNumeroATextoState extends State<JuegoNumeroATexto> {
                         ),
                       ),
               ],
-            )
+            ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class JuegoSiguiente extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Siguiente juego')),
-      body: Center(child: Text('Aquí va el siguiente juego ✨')),
     );
   }
 }

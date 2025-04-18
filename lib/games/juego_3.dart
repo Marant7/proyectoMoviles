@@ -1,53 +1,48 @@
 import 'package:flutter/material.dart';
-import 'juego_2.dart'; // ⚠️ Asegúrate de que este archivo exista
+import 'package:flutter_jueguito/games/juego_4.dart';
 
-class JuegoNumerosImagen extends StatefulWidget {
-  @override
-  State<JuegoNumerosImagen> createState() => _JuegoNumerosImagenState();
+
+class ImagenConRespuesta {
+  final String imagePath;
+  final String respuestaCorrecta;
+  String? respuestaUsuario;
+
+  ImagenConRespuesta({required this.imagePath, required this.respuestaCorrecta});
 }
 
-class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
-  final List<Map<String, dynamic>> imagenes = [
-    {'path': 'assets/images/pared.png', 'respuesta': 3},
-    {'path': 'assets/images/mitad.png', 'respuesta': 2},
-    {'path': 'assets/images/red.png', 'respuesta': 8},
-    {'path': 'assets/images/optica.png', 'respuesta': 4},
-    {'path': 'assets/images/reptil.png', 'respuesta': 7},
-    {'path': 'assets/images/reloj.png', 'respuesta': 6},
+class JuegoDragDrop3 extends StatefulWidget {
+  @override
+  State<JuegoDragDrop3> createState() => _JuegoDragDrop2State();
+}
+
+class _JuegoDragDrop2State extends State<JuegoDragDrop3> {
+  List<ImagenConRespuesta> grupo1 = [
+    ImagenConRespuesta(imagePath: 'assets/images/trompo.png', respuestaCorrecta: 'trompo'),
+    ImagenConRespuesta(imagePath: 'assets/images/planta.png', respuestaCorrecta: 'planta'),
   ];
 
-  final List<Map<String, dynamic>> opciones = [
-    {'numero': 1, 'texto': 'ataúd'},
-    {'numero': 2, 'texto': 'mitad'},
-    {'numero': 3, 'texto': 'pared'},
-    {'numero': 4, 'texto': 'óptica'},
-    {'numero': 5, 'texto': 'robot'},
-    {'numero': 6, 'texto': 'reloj'},
-    {'numero': 7, 'texto': 'reptil'},
-    {'numero': 8, 'texto': 'red'},
+  List<ImagenConRespuesta> grupo2 = [
+    ImagenConRespuesta(imagePath: 'assets/images/tractor.png', respuestaCorrecta: 'tractor'),
+    ImagenConRespuesta(imagePath: 'assets/images/plancha.png', respuestaCorrecta: 'plancha'),
   ];
 
-  Map<int, int?> respuestasUsuario = {};
+  List<String> opcionesGrupo1 = ['trompo', 'trampa', 'planta'];
+  List<String> opcionesGrupo2 = ['blanco', 'tractor', 'plancha'];
+
   bool desbloqueado = false;
 
-  void verificarRespuestas() {
-    bool todoCorrecto = true;
+  void verificar() {
+    bool grupo1Correcto = grupo1.every((img) => img.respuestaUsuario == img.respuestaCorrecta);
+    bool grupo2Correcto = grupo2.every((img) => img.respuestaUsuario == img.respuestaCorrecta);
 
-    for (int i = 0; i < imagenes.length; i++) {
-      final correcta = imagenes[i]['respuesta'];
-      final usuario = respuestasUsuario[i];
-      if (usuario != correcta) {
-        todoCorrecto = false;
-        break;
-      }
-    }
+    bool todoBien = grupo1Correcto && grupo2Correcto;
 
     setState(() {
-      desbloqueado = todoCorrecto;
+      desbloqueado = todoBien;
     });
 
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(todoCorrecto
+      content: Text(todoBien
           ? '¡Todas las respuestas son correctas! 🎉'
           : 'Hay respuestas incorrectas ❌'),
     ));
@@ -63,58 +58,28 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Juego: Arrastra el número correcto')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      appBar: AppBar(title: Text('Juego: Arrastra debajo de la imagen')),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: imagenes.sublist(0, 3).asMap().entries.map((entry) {
-                        return buildImagen(entry.key, entry.value['path']);
-                      }).toList(),
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: opciones.map((op) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Draggable<int>(
-                            data: op['numero'],
-                            feedback: Material(
-                              color: Colors.transparent,
-                              child: numeroEnCirculo(op['numero'], dragging: true),
-                            ),
-                            childWhenDragging: Opacity(
-                              opacity: 0.3,
-                              child: numeroTexto(op['numero'], op['texto']),
-                            ),
-                            child: numeroTexto(op['numero'], op['texto']),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: imagenes.sublist(3, 6).asMap().entries.map((entry) {
-                        return buildImagen(entry.key + 3, entry.value['path']);
-                      }).toList(),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16),
+            Text('Grupo 1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            buildGrupo(grupo1, opcionesGrupo1),
+
+            SizedBox(height: 32),
+
+            Text('Grupo 2', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            buildGrupo(grupo2, opcionesGrupo2),
+
+            SizedBox(height: 30),
+
             ElevatedButton(
-              onPressed: verificarRespuestas,
+              onPressed: verificar,
               child: Text('Verificar respuestas'),
             ),
+
             SizedBox(height: 10),
+
             desbloqueado
                 ? ElevatedButton(
                     onPressed: irAlSiguienteJuego,
@@ -126,6 +91,7 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
                     child: IgnorePointer(
                       child: ElevatedButton(
                         onPressed: () {},
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -143,75 +109,91 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
     );
   }
 
-  Widget buildImagen(int index, String path) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        children: [
-          Container(
-            width: 100,
-            height: 100,
-            margin: EdgeInsets.only(bottom: 8),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Image.asset(path, fit: BoxFit.contain),
-          ),
-          DragTarget<int>(
-            onAccept: (numero) {
-              setState(() {
-                respuestasUsuario[index] = numero;
-              });
-            },
-            builder: (context, candidateData, rejectedData) {
-              return Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.blue, width: 2),
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: respuestasUsuario[index] != null
-                    ? Text(
-                        respuestasUsuario[index].toString(),
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      )
-                    : null,
-              );
-            },
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget numeroTexto(int numero, String texto) {
-    return Row(
+  Widget buildGrupo(List<ImagenConRespuesta> imagenes, List<String> opciones) {
+    return Column(
       children: [
-        numeroEnCirculo(numero),
-        SizedBox(width: 8),
-        Text(texto, style: TextStyle(fontSize: 16)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: imagenes
+              .map((img) => Expanded(child: buildImagenConZona(img)))
+              .toList(),
+        ),
+        SizedBox(height: 16),
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 12,
+          children: opciones
+              .map((op) => Draggable<String>(
+                    data: op,
+                    feedback: Material(
+                      color: Colors.transparent,
+                      child: palabraChip(op, isDragging: true),
+                    ),
+                    childWhenDragging:
+                        Opacity(opacity: 0.3, child: palabraChip(op)),
+                    child: palabraChip(op),
+                  ))
+              .toList(),
+        ),
       ],
     );
   }
 
-  Widget numeroEnCirculo(int numero, {bool dragging = false}) {
+  Widget buildImagenConZona(ImagenConRespuesta img) {
+    return Column(
+      children: [
+        Container(
+          width: 120,
+          height: 120,
+          margin: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.white,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(img.imagePath, fit: BoxFit.contain),
+          ),
+        ),
+        DragTarget<String>(
+          onAccept: (palabra) {
+            setState(() {
+              img.respuestaUsuario = palabra;
+            });
+          },
+          builder: (context, candidateData, rejectedData) {
+            return Container(
+              width: 100,
+              height: 50,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.green[50],
+                border: Border.all(color: Colors.green),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                img.respuestaUsuario ?? 'Arrastra aquí',
+                style: TextStyle(fontSize: 16),
+              ),
+            );
+          },
+        )
+      ],
+    );
+  }
+
+  Widget palabraChip(String palabra, {bool isDragging = false}) {
     return Container(
-      width: 32,
-      height: 32,
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: dragging ? Colors.blue[200] : Colors.blue[100],
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.blue),
+        color: isDragging ? Colors.orange[300] : Colors.orange[100],
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: isDragging
+            ? [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(2, 2))]
+            : [],
       ),
-      alignment: Alignment.center,
-      child: Text(
-        numero.toString(),
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
+      child: Text(palabra, style: TextStyle(fontSize: 16)),
     );
   }
 }

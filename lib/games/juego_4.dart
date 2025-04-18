@@ -1,48 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_jueguito/games/juego_5.dart';
+import 'package:flutter_jueguito/games/juego_3.dart';
 
-class JuegoConDosImagenes extends StatefulWidget {
-  @override
-  _JuegoConDosImagenesState createState() => _JuegoConDosImagenesState();
+class Question {
+  final String imagePath;
+  final List<String> options;
+  final String answer;
+
+  Question({
+    required this.imagePath,
+    required this.options,
+    required this.answer,
+  });
 }
 
-class _JuegoConDosImagenesState extends State<JuegoConDosImagenes> {
-  final List<Map<String, dynamic>> preguntas = [
-    {
-      'izquierda': 'assets/images/lampara.png',
-      'derecha': 'assets/images/bombero.png',
-      'opciones': ['combate', 'campana', 'lámpara'],
-      'respuestas': ['lámpara', 'bombero']
-    },
-    {
-      'izquierda': 'assets/images/tambor.png',
-      'derecha': 'assets/images/embudo.png',
-      'opciones': ['compás', 'tambor', 'bombón'],
-      'respuestas': ['tambor', 'embudo']
-    },
+class Juego_2 extends StatefulWidget {
+  @override
+  _JuegoDragDropState createState() => _JuegoDragDropState();
+}
+
+class _JuegoDragDropState extends State<Juego_2> {
+  final List<Question> questions = [
+    Question(
+      imagePath: 'assets/images/globo.png',
+      options: ['gloria', 'globo', 'clavel'],
+      answer: 'globo',
+    ),
+    Question(
+      imagePath: 'assets/images/iglu.png',
+      options: ['jungla', 'iglú', 'esclavo'],
+      answer: 'iglú',
+    ),
+    Question(
+      imagePath: 'assets/images/reglas.png',
+      options: ['ancla', 'siglo', 'regla'],
+      answer: 'regla',
+    ),
+    Question(
+      imagePath: 'assets/images/gloton.png',
+      options: ['inglesa', 'glotón', 'clarín'],
+      answer: 'glotón',
+    ),
   ];
 
-  Map<int, String?> respuestasUsuarioIzq = {};
-  Map<int, String?> respuestasUsuarioDer = {};
-  bool desbloqueado = false;
+  Map<int, String?> userAnswers = {};
+  bool isUnlocked = false;
 
-  void verificar() {
-    bool correcto = true;
-
-    for (int i = 0; i < preguntas.length; i++) {
-      final r = preguntas[i]['respuestas'];
-      if (respuestasUsuarioIzq[i] != r[0] || respuestasUsuarioDer[i] != r[1]) {
-        correcto = false;
+  void checkAnswers() {
+    bool allCorrect = true;
+    for (int i = 0; i < questions.length; i++) {
+      if (userAnswers[i] != questions[i].answer) {
+        allCorrect = false;
         break;
       }
     }
 
-    setState(() => desbloqueado = correcto);
+    setState(() {
+      isUnlocked = allCorrect;
+    });
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(correcto
-          ? '¡Todas las respuestas son correctas! 🎉'
-          : 'Hay respuestas incorrectas ❌'),
-    ));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          allCorrect
+              ? '¡Todas las respuestas son correctas! 🎉'
+              : 'Hay respuestas incorrectas ❌',
+        ),
+      ),
+    );
+  }
+
+  void goToNextGame() {
+    Navigator.push(context, MaterialPageRoute(builder: (_) => JuegoNumerosImagen()));
   }
 
   @override
@@ -50,152 +79,153 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes> {
     return Scaffold(
       appBar: AppBar(title: Text('Juego: Arrastra la palabra correcta')),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            ...List.generate(preguntas.length, (index) {
-              final p = preguntas[index];
+            ...List.generate(questions.length, (index) {
+              final q = questions[index];
+              final isImageLeft = index % 2 == 0;
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    buildImagenConDrop(p['izquierda'], true, index),
-                    buildCirculoDeOpciones(p['opciones']),
-                    buildImagenConDrop(p['derecha'], false, index),
-                  ],
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:
+                      isImageLeft
+                          ? [
+                            imageBox(q.imagePath),
+                            Expanded(child: dropZone(index)),
+                            wordOptions(q.options, index),
+                          ]
+                          : [
+                            wordOptions(q.options, index),
+                            Expanded(child: dropZone(index)),
+                            imageBox(q.imagePath),
+                          ],
                 ),
               );
             }),
-            SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: verificar,
-                  child: Text('Verificar respuestas'),
+            SizedBox(height: 30),
+            ElevatedButton(
+              onPressed: checkAnswers,
+              child: Text('Verificar respuestas'),
+            ),
+            SizedBox(height: 10),
+            if (isUnlocked)
+              ElevatedButton(
+                onPressed: goToNextGame,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                child: Text('Siguiente juego'),
+              )
+            else
+              Opacity(
+                opacity: 0.4,
+                child: IgnorePointer(
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.lock),
+                        SizedBox(width: 8),
+                        Text('Siguiente juego'),
+                      ],
+                    ),
+                  ),
                 ),
-                SizedBox(width: 16),
-                desbloqueado
-                    ? ElevatedButton(
-                        onPressed: () {
-                          // Aquí ir al siguiente juego
-                        },
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                        child: Text('Siguiente juego'),
-                      )
-                    : Opacity(
-                        opacity: 0.4,
-                        child: IgnorePointer(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.lock),
-                                SizedBox(width: 8),
-                                Text('Siguiente juego'),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-              ],
-            )
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget buildImagenConDrop(String path, bool esIzquierda, int preguntaIndex) {
-    return Column(
-      children: [
-        Container(
-          width: 100,
-          height: 100,
-          margin: EdgeInsets.only(bottom: 8),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
-            color: Colors.white,
-          ),
-          child: Image.asset(path, fit: BoxFit.contain),
-        ),
-        DragTarget<String>(
-          onAccept: (data) {
-            setState(() {
-              if (esIzquierda) {
-                respuestasUsuarioIzq[preguntaIndex] = data;
-              } else {
-                respuestasUsuarioDer[preguntaIndex] = data;
-              }
-            });
-          },
-          builder: (context, candidateData, rejectedData) {
-            final value = esIzquierda
-                ? respuestasUsuarioIzq[preguntaIndex]
-                : respuestasUsuarioDer[preguntaIndex];
-
-            return Container(
-              width: 100,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.green[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.green),
-              ),
-              alignment: Alignment.center,
-              child: Text(value ?? 'Arrastra aquí'),
-            );
-          },
-        ),
-      ],
+  Widget imageBox(String imagePath) {
+    return Container(
+      width: 100,
+      height: 100,
+      margin: EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Image.asset(imagePath, fit: BoxFit.contain),
+      ),
     );
   }
 
-  Widget buildCirculoDeOpciones(List<String> opciones) {
-    return Container(
-      width: 140,
-      height: 140,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.orange[100],
-        border: Border.all(color: Colors.deepOrange, width: 3),
-        boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(2, 2))],
-      ),
-      child: Center(
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          spacing: 8,
-          runSpacing: 8,
-          children: opciones.map((palabra) {
-            return Draggable<String>(
-              data: palabra,
-              feedback: Material(
-                color: Colors.transparent,
-                child: palabraSimple(palabra, dragging: true),
+  Widget wordOptions(List<String> options, int questionIndex) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children:
+          options.map((word) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              child: Draggable<String>(
+                data: word,
+                feedback: Material(
+                  color: Colors.transparent,
+                  child: wordChip(word, isDragging: true),
+                ),
+                childWhenDragging: Opacity(opacity: 0.3, child: wordChip(word)),
+                child: wordChip(word),
               ),
-              childWhenDragging:
-                  Opacity(opacity: 0.3, child: palabraSimple(palabra)),
-              child: palabraSimple(palabra),
             );
           }).toList(),
-        ),
-      ),
     );
   }
 
-  Widget palabraSimple(String palabra, {bool dragging = false}) {
-    return Text(
-      palabra,
-      style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-        color: dragging ? Colors.orange[900] : Colors.black,
+  Widget dropZone(int questionIndex) {
+    final answer = userAnswers[questionIndex];
+
+    return DragTarget<String>(
+      onAccept: (data) {
+        setState(() {
+          userAnswers[questionIndex] = data;
+        });
+      },
+      builder: (context, candidateData, rejectedData) {
+        return Container(
+          height: 60,
+          margin: EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: Colors.green[50],
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.green),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            answer ?? 'Arrastra aquí',
+            style: TextStyle(fontSize: 18, color: Colors.black87),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget wordChip(String word, {bool isDragging = false}) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: isDragging ? Colors.orange[300] : Colors.orange[100],
+        borderRadius: BorderRadius.circular(20),
+        boxShadow:
+            isDragging
+                ? [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 4,
+                    offset: Offset(2, 2),
+                  ),
+                ]
+                : [],
       ),
+      child: Text(word, style: TextStyle(fontSize: 16)),
     );
   }
 }

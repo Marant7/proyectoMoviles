@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'juego_dragdrop2.dart';
+import 'juego_2.dart';
 
 class Question {
   final String imagePath;

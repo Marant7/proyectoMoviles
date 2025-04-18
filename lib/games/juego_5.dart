@@ -1,307 +1,213 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_jueguito/games/juego_silabas.dart';
+import 'package:flutter_jueguito/games/juego_4.dart';
+import 'package:flutter_jueguito/games/juego_6.dart';
+import 'juego_4.dart'; // ⚠️ Asegúrate de que este archivo exista
 
-class JuegoArrastraNumero extends StatefulWidget {
+class JuegoNumerosImagen extends StatefulWidget {
   @override
-  State<JuegoArrastraNumero> createState() => _JuegoArrastraNumeroState();
+  State<JuegoNumerosImagen> createState() => _JuegoNumerosImagenState();
 }
 
-class _JuegoArrastraNumeroState extends State<JuegoArrastraNumero> {
-  final List<Map<String, dynamic>> data = [
-    {
-      'imagenIzq': 'assets/images/trompo.png',
-      'numeroIzq': 1,
-      'imagenDer': 'assets/images/trompo.png',
-      'numeroDer': 2,
-      'alternativas': ['ataúd', 'mitad', 'pared'],
-      'respuestas': [1, 2], // dos números correctos
-    },
-    {
-      'imagenIzq': 'assets/images/trompo.png',
-      'numeroIzq': 3,
-      'imagenDer': 'assets/images/trompo.png',
-      'numeroDer': 4,
-      'alternativas': ['óptica', 'robot', 'reloj'],
-      'respuestas': [3, 4],
-    },
-    {
-      'imagenIzq': 'assets/images/trompo.png',
-      'numeroIzq': 5,
-      'imagenDer': 'assets/images/trompo.png',
-      'numeroDer': 6,
-      'alternativas': ['reptil', 'red', 'agua'],
-      'respuestas': [5, 6],
-    },
-    {
-      'imagenIzq': 'assets/images/trompo.png',
-      'numeroIzq': 7,
-      'imagenDer': 'assets/images/trompo.png',
-      'numeroDer': 8,
-      'alternativas': ['campana', 'compás', 'bombón'],
-      'respuestas': [7, 8],
-    },
+class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
+  final List<Map<String, dynamic>> imagenes = [
+    {'path': 'assets/images/pared.png', 'respuesta': 3},
+    {'path': 'assets/images/mitad.png', 'respuesta': 2},
+    {'path': 'assets/images/red.png', 'respuesta': 8},
+    {'path': 'assets/images/optica.png', 'respuesta': 4},
+    {'path': 'assets/images/reptil.png', 'respuesta': 7},
+    {'path': 'assets/images/reloj.png', 'respuesta': 6},
   ];
 
-  // Las únicas palabras que deben aceptar número
-  final List<String> alternativasConCirculo = [
-    'ataúd',
-    'mitad',
-    'pared',
-    'óptica',
-    'reloj',
-    'reptil',
-    'red',
-    'campana',
+  final List<Map<String, dynamic>> opciones = [
+    {'numero': 1, 'texto': 'ataúd'},
+    {'numero': 2, 'texto': 'mitad'},
+    {'numero': 3, 'texto': 'pared'},
+    {'numero': 4, 'texto': 'óptica'},
+    {'numero': 5, 'texto': 'robot'},
+    {'numero': 6, 'texto': 'reloj'},
+    {'numero': 7, 'texto': 'reptil'},
+    {'numero': 8, 'texto': 'red'},
   ];
 
-  Map<String, int?> respuestasUsuario = {}; // palabra -> número asignado
+  Map<int, int?> respuestasUsuario = {};
   bool desbloqueado = false;
 
-  void verificar() {
+  void verificarRespuestas() {
     bool todoCorrecto = true;
 
-    for (var fila in data) {
-      List<int> respuestasCorrectas = List<int>.from(fila['respuestas']);
-      bool alMenosUnaCoincide = fila['alternativas'].any(
-        (palabra) => respuestasCorrectas.contains(respuestasUsuario[palabra]),
-      );
-      if (!alMenosUnaCoincide) {
+    for (int i = 0; i < imagenes.length; i++) {
+      final correcta = imagenes[i]['respuesta'];
+      final usuario = respuestasUsuario[i];
+      if (usuario != correcta) {
         todoCorrecto = false;
         break;
       }
     }
 
-    setState(() => desbloqueado = todoCorrecto);
+    setState(() {
+      desbloqueado = todoCorrecto;
+    });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          todoCorrecto
-              ? '¡Todas las respuestas son correctas! 🎉'
-              : 'Hay errores. Intenta nuevamente ❌',
-        ),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(todoCorrecto
+          ? '¡Todas las respuestas son correctas! 🎉'
+          : 'Hay respuestas incorrectas ❌'),
+    ));
   }
 
   void irAlSiguienteJuego() {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => JuegoSilabas()), // o el widget correspondiente
-  );
-}
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => JuegoArrastraNumero()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Juego: Arrastra el número a la alternativa')),
-      body: SingleChildScrollView(
+      appBar: AppBar(title: Text('Juego: Arrastra el número correcto')),
+      body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(children: data.map((fila) => buildFila(fila)).toList()),
-      ),
-      //boton de ayuda para boton de cel 
-      bottomNavigationBar: SafeArea(
-  child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Column(
           children: [
             Expanded(
-              child: ElevatedButton(
-                onPressed: verificar,
-                child: Text('Verificar respuestas'),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      children: imagenes.sublist(0, 3).asMap().entries.map((entry) {
+                        return buildImagen(entry.key, entry.value['path']);
+                      }).toList(),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: opciones.map((op) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Draggable<int>(
+                            data: op['numero'],
+                            feedback: Material(
+                              color: Colors.transparent,
+                              child: numeroEnCirculo(op['numero'], dragging: true),
+                            ),
+                            childWhenDragging: Opacity(
+                              opacity: 0.3,
+                              child: numeroTexto(op['numero'], op['texto']),
+                            ),
+                            child: numeroTexto(op['numero'], op['texto']),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: imagenes.sublist(3, 6).asMap().entries.map((entry) {
+                        return buildImagen(entry.key + 3, entry.value['path']);
+                      }).toList(),
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(width: 12),
-            Expanded(
-              child:
-                  desbloqueado
-                      ? ElevatedButton(
-                        onPressed: irAlSiguienteJuego,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                        ),
-                        child: Text('Siguiente juego'),
-                      )
-                      : Opacity(
-                        opacity: 0.4,
-                        child: IgnorePointer(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.lock),
-                                SizedBox(width: 8),
-                                Text('Siguiente juego'),
-                              ],
-                            ),
-                          ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: verificarRespuestas,
+              child: Text('Verificar respuestas'),
+            ),
+            SizedBox(height: 10),
+            desbloqueado
+                ? ElevatedButton(
+                    onPressed: irAlSiguienteJuego,
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                    child: Text('Siguiente juego'),
+                  )
+                : Opacity(
+                    opacity: 0.4,
+                    child: IgnorePointer(
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.lock),
+                            SizedBox(width: 8),
+                            Text('Siguiente juego'),
+                          ],
                         ),
                       ),
-            ),
+                    ),
+                  ),
           ],
         ),
-      ),
       ),
     );
   }
 
-  Widget buildFila(Map<String, dynamic> fila) {
-    final numeroIzq = fila['numeroIzq'];
-    final numeroDer = fila['numeroDer'];
-
+  Widget buildImagen(int index, String path) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
         children: [
-          buildImagenConNumero(fila['imagenIzq'], numeroIzq),
-          SizedBox(width: 35),
-          Expanded(
-            child: Center(
-              child: buildAlternativas(
-                fila['alternativas'],
-                fila['respuestas'],
-              ),
+          Container(
+            width: 100,
+            height: 100,
+            margin: EdgeInsets.only(bottom: 8),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(12),
             ),
+            child: Image.asset(path, fit: BoxFit.contain),
           ),
-          SizedBox(width: 35),
-          buildImagenConNumero(fila['imagenDer'], numeroDer),
+          DragTarget<int>(
+            onAccept: (numero) {
+              setState(() {
+                respuestasUsuario[index] = numero;
+              });
+            },
+            builder: (context, candidateData, rejectedData) {
+              return Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.blue, width: 2),
+                  shape: BoxShape.circle,
+                ),
+                alignment: Alignment.center,
+                child: respuestasUsuario[index] != null
+                    ? Text(
+                        respuestasUsuario[index].toString(),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      )
+                    : null,
+              );
+            },
+          )
         ],
       ),
     );
   }
 
-  Widget buildImagenConNumero(String path, int numero) {
-    return Column(
+  Widget numeroTexto(int numero, String texto) {
+    return Row(
       children: [
-        Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Image.asset(path, fit: BoxFit.contain),
-        ),
-        SizedBox(height: 8),
-        Draggable<int>(
-          data: numero,
-          feedback: Material(
-            color: Colors.transparent,
-            child: numeroCirculo(numero, dragging: true),
-          ),
-          childWhenDragging: Opacity(
-            opacity: 0.3,
-            child: numeroCirculo(numero),
-          ),
-          child: numeroCirculo(numero),
-        ),
+        numeroEnCirculo(numero),
+        SizedBox(width: 8),
+        Text(texto, style: TextStyle(fontSize: 16)),
       ],
     );
   }
 
-  Widget buildAlternativas(
-    List<String> alternativas,
-    List<int> respuestasEsperadas,
-  ) {
-    return Column(
-      children:
-          alternativas.map((palabra) {
-            final asignado = respuestasUsuario[palabra];
-            final fueAsignado = asignado != null;
-            final esCorrecta =
-                fueAsignado && respuestasEsperadas.contains(asignado);
-
-            Color? colorFondo;
-            if (fueAsignado && desbloqueado) {
-              colorFondo = esCorrecta ? Colors.green[100] : Colors.red[100];
-            } else if (fueAsignado) {
-              colorFondo = Colors.blue[100];
-            }
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      if (asignado != null) {
-                        setState(() {
-                          respuestasUsuario[palabra] = null;
-                        });
-                      }
-                    },
-                    child: DragTarget<int>(
-                      onAccept: (numero) {
-                        setState(() {
-                          respuestasUsuario[palabra] = numero;
-                        });
-                      },
-                      builder: (context, candidateData, rejectedData) {
-                        return Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.blue),
-                            color: colorFondo ?? Colors.transparent,
-                          ),
-                          alignment: Alignment.center,
-                          child:
-                              asignado != null
-                                  ? Text(
-                                    asignado.toString(),
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                  : null,
-                        );
-                      },
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Text(palabra, style: TextStyle(fontSize: 16)),
-                ],
-              ),
-            );
-          }).toList(),
-    );
-  }
-
-  Widget circuloAlternativa(int? numero) {
+  Widget numeroEnCirculo(int numero, {bool dragging = false}) {
     return Container(
       width: 32,
       height: 32,
       decoration: BoxDecoration(
+        color: dragging ? Colors.blue[200] : Colors.blue[100],
         shape: BoxShape.circle,
         border: Border.all(color: Colors.blue),
-        color: numero != null ? Colors.blue[100] : Colors.transparent,
-      ),
-      alignment: Alignment.center,
-      child:
-          numero != null
-              ? Text(
-                numero.toString(),
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )
-              : null,
-    );
-  }
-
-  Widget numeroCirculo(int numero, {bool dragging = false}) {
-    return Container(
-      width: 32,
-      height: 32,
-      decoration: BoxDecoration(
-        color: dragging ? Colors.orange[300] : Colors.orange[100],
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.deepOrange),
       ),
       alignment: Alignment.center,
       child: Text(

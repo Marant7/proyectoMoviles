@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_jueguito/games/juego_dragdrop3.dart';
+import 'package:flutter_jueguito/games/juego_3.dart';
 
 class Question {
   final String imagePath;
@@ -13,32 +13,32 @@ class Question {
   });
 }
 
-class Juego_2 extends StatefulWidget {
+class JuegoDragDrop2 extends StatefulWidget {
   @override
   _JuegoDragDropState createState() => _JuegoDragDropState();
 }
 
-class _JuegoDragDropState extends State<Juego_2> {
+class _JuegoDragDropState extends State<JuegoDragDrop2> {
   final List<Question> questions = [
     Question(
-      imagePath: 'assets/images/globo.png',
-      options: ['gloria', 'globo', 'clavel'],
-      answer: 'globo',
+      imagePath: 'assets/images/lampara.png',
+      options: ['combate', 'campana', 'lámpara'],
+      answer: 'lámpara',
     ),
     Question(
-      imagePath: 'assets/images/iglu.png',
-      options: ['jungla', 'iglú', 'esclavo'],
-      answer: 'iglú',
+      imagePath: 'assets/images/bombero.png',
+      options: ['bombero', 'ampoya', 'tumba'],
+      answer: 'bombero',
     ),
     Question(
-      imagePath: 'assets/images/reglas.png',
-      options: ['ancla', 'siglo', 'regla'],
-      answer: 'regla',
+      imagePath: 'assets/images/tambor.png',
+      options: ['compás', 'tambor', 'bombón'],
+      answer: 'tambor',
     ),
     Question(
-      imagePath: 'assets/images/gloton.png',
-      options: ['inglesa', 'glotón', 'clarín'],
-      answer: 'glotón',
+      imagePath: 'assets/images/embudo.png',
+      options: ['estampa', 'embudo', 'empaste'],
+      answer: 'embudo',
     ),
   ];
 
