@@ -164,7 +164,7 @@ class _JuegoDragDropState extends State<JuegoDragDrop2> {
       children:
           options.map((word) {
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4.0),
+              padding: const EdgeInsets.symmetric(vertical: 2.0),
               child: Draggable<String>(
                 data: word,
                 feedback: Material(
@@ -190,8 +190,8 @@ class _JuegoDragDropState extends State<JuegoDragDrop2> {
       },
       builder: (context, candidateData, rejectedData) {
         return Container(
-          height: 60,
-          margin: EdgeInsets.symmetric(horizontal: 16),
+          height: 55,
+          margin: EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
             color: Colors.green[50],
             borderRadius: BorderRadius.circular(12),
@@ -200,7 +200,7 @@ class _JuegoDragDropState extends State<JuegoDragDrop2> {
           alignment: Alignment.center,
           child: Text(
             answer ?? 'Arrastra aquí',
-            style: TextStyle(fontSize: 18, color: Colors.black87),
+            style: TextStyle(fontSize: 15, color: Colors.black87),
           ),
         );
       },
@@ -209,7 +209,7 @@ class _JuegoDragDropState extends State<JuegoDragDrop2> {
 
   Widget wordChip(String word, {bool isDragging = false}) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 8),
       decoration: BoxDecoration(
         color: isDragging ? Colors.orange[300] : Colors.orange[100],
         borderRadius: BorderRadius.circular(20),

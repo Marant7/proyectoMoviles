@@ -103,7 +103,7 @@ class _JuegoDragDropState extends State<JuegoDragDrop> {
                 ),
               );
             }),
-            SizedBox(height: 30),
+            SizedBox(height: 10),
             ElevatedButton(
               onPressed: checkAnswers,
               child: Text('Verificar respuestas'),
@@ -209,10 +209,10 @@ class _JuegoDragDropState extends State<JuegoDragDrop> {
 
   Widget wordChip(String word, {bool isDragging = false}) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 35, vertical: 6),
       decoration: BoxDecoration(
         color: isDragging ? Colors.orange[300] : Colors.orange[100],
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(30),
         boxShadow:
             isDragging
                 ? [

@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mis Juegos',
       debugShowCheckedModeBanner: false,
-      home: MenuPrincipal(),
+      home: JuegoDragDrop2(),
     );
   }
 }
