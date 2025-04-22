@@ -62,17 +62,12 @@ class _JuegoDragDropState extends State<Juego_2> {
 
     if (allCorrect) {
       Celebracion.mostrar(context); // 🎉 Mostrar confeti
+    } else {
+      // Aquí no se muestra mensaje de error, solo el botón de siguiente juego
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('¡Intenta nuevamente!')),
+      );
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          allCorrect 
-          ? '¡Todas las respuestas son correctas! 🎉'
-          : 'Respuestas incorrectas ❌',
-        ),
-      ),
-    );
   }
 
   void goToNextGame() {

@@ -43,10 +43,6 @@ class _JuegoDragDrop2State extends State<JuegoDragDrop3> {
 
     if (todoBien) {
       Celebracion.mostrar(context); // 🎉 Mostrar la celebración
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Hay respuestas incorrectas ❌'),
-      ));
     }
   }
 
@@ -58,80 +54,80 @@ class _JuegoDragDrop2State extends State<JuegoDragDrop3> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: Text('Juego: Arrastra debajo de la imagen'),
-      backgroundColor: Colors.blueAccent,
-    ),
-    body: Container(
-      decoration: BoxDecoration(
-        color: Colors.blue[50], // Puedes cambiar el color aquí para ajustarlo a tus preferencias
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Juego: Arrastra debajo de la imagen'),
+        backgroundColor: Colors.blueAccent,
       ),
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // El contenido del juego va aquí (por ejemplo, los grupos de imágenes y botones)
-            Text('Grupo 1', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
-            buildGrupo(grupo1, opcionesGrupo1),
+      body: Container(
+        decoration: BoxDecoration(
+          color: Colors.blue[50], // Puedes cambiar el color aquí para ajustarlo a tus preferencias
+        ),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(16),
+          child: Column(
+            children: [
+              // El contenido del juego va aquí (por ejemplo, los grupos de imágenes y botones)
+              Text('Grupo 1', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
+              buildGrupo(grupo1, opcionesGrupo1),
 
-            SizedBox(height: 32),
+              SizedBox(height: 32),
 
-            Text('Grupo 2', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
-            buildGrupo(grupo2, opcionesGrupo2),
+              Text('Grupo 2', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
+              buildGrupo(grupo2, opcionesGrupo2),
 
-            SizedBox(height: 30),
+              SizedBox(height: 30),
 
-            ElevatedButton(
-              onPressed: verificar,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrangeAccent,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                padding: EdgeInsets.symmetric(vertical: 14, horizontal: 32),
+              ElevatedButton(
+                onPressed: verificar,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepOrangeAccent,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  padding: EdgeInsets.symmetric(vertical: 14, horizontal: 32),
+                ),
+                child: Text('Verificar respuestas', style: TextStyle(fontSize: 18)),
               ),
-              child: Text('Verificar respuestas', style: TextStyle(fontSize: 18)),
-            ),
 
-            SizedBox(height: 10),
+              SizedBox(height: 10),
 
-            desbloqueado
-                ? ElevatedButton(
-                    onPressed: irAlSiguienteJuego,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 32),
-                    ),
-                    child: Text('Siguiente juego', style: TextStyle(fontSize: 18)),
-                  )
-                : Opacity(
-                    opacity: 0.4,
-                    child: IgnorePointer(
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 32),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.lock, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text('Siguiente juego', style: TextStyle(fontSize: 18)),
-                          ],
+              desbloqueado
+                  ? ElevatedButton(
+                      onPressed: irAlSiguienteJuego,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        padding: EdgeInsets.symmetric(vertical: 14, horizontal: 32),
+                      ),
+                      child: Text('Siguiente juego', style: TextStyle(fontSize: 18)),
+                    )
+                  : Opacity(
+                      opacity: 0.4,
+                      child: IgnorePointer(
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            padding: EdgeInsets.symmetric(vertical: 14, horizontal: 32),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.lock, color: Colors.white),
+                              SizedBox(width: 8),
+                              Text('Siguiente juego', style: TextStyle(fontSize: 18)),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget buildGrupo(List<ImagenConRespuesta> imagenes, List<String> opciones) {
     return Column(

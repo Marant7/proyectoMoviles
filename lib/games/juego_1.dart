@@ -134,24 +134,25 @@ class _JuegoDragDropState extends State<JuegoDragDrop> {
                   );
                 }),
                 SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: checkAnswers,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 8, 10, 156),
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
+                if (!isUnlocked)
+                  ElevatedButton(
+                    onPressed: checkAnswers,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 8, 10, 156),
+                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: Text(
+                      'Verificar respuestas',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white, // <-- el color
+                      ),
                     ),
                   ),
-                  child: Text(
-                    'Verificar respuestas',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white, // <-- el color
-                    ),
-                  ),
-                ),
                 SizedBox(height: 20),
                 if (isUnlocked)
                   ElevatedButton(

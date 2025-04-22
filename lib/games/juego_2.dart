@@ -148,7 +148,7 @@ class _JuegoDragDropState2 extends State<JuegoDragDrop2> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white, // <-- el color
+                      color: Colors.white,
                     ),
                   ),
                 ),
