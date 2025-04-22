@@ -35,30 +35,28 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes2> {
   bool desbloqueado = false;
 
   void verificar() {
-  bool correcto = true;
+    bool correcto = true;
 
-  for (int i = 0; i < preguntas.length; i++) {
-    final r = preguntas[i]['respuestas'];
-    if (respuestasUsuarioIzq[i] != r[0] || respuestasUsuarioDer[i] != r[1]) {
-      correcto = false;
-      break;
+    for (int i = 0; i < preguntas.length; i++) {
+      final r = preguntas[i]['respuestas'];
+      if (respuestasUsuarioIzq[i] != r[0] || respuestasUsuarioDer[i] != r[1]) {
+        correcto = false;
+        break;
+      }
+    }
+
+    setState(() => desbloqueado = correcto);
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(correcto
+          ? '¡Todas las respuestas son correctas! 🎉'
+          : 'Hay respuestas incorrectas ❌'),
+    ));
+
+    if (correcto) {
+      Celebracion.mostrar(context);
     }
   }
-
-  setState(() => desbloqueado = correcto);
-
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    content: Text(correcto
-        ? '¡Todas las respuestas son correctas! 🎉'
-        : 'Hay respuestas incorrectas ❌'),
-  ));
-
-  // Si las respuestas son correctas, mostramos la celebración
-  if (correcto) {
-    Celebracion.mostrar(context);
-  }
-}
-
 
   void irAlSiguienteJuego() {
     Navigator.push(
@@ -70,9 +68,14 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Juego: Arrastra la palabra correcta')),
+      backgroundColor: Colors.orange[50],
+      appBar: AppBar(
+        backgroundColor: Colors.deepOrange,
+        title: Text('Juego: Arrastra la palabra correcta'),
+        centerTitle: true,
+      ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(20),
         child: Column(
           children: [
             ...List.generate(preguntas.length, (index) {
@@ -81,7 +84,6 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes2> {
                 padding: const EdgeInsets.symmetric(vertical: 24),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     buildImagenConDrop(p['izquierda'], true, index),
                     buildCirculoDeOpciones(p['opciones']),
@@ -90,36 +92,45 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes2> {
                 ),
               );
             }),
-            SizedBox(height: 24),
+            SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: verificar,
-                  child: Text('Verificar respuestas'),
+                  icon: Icon(Icons.check_circle_outline),
+                  label: Text('Verificar respuestas'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrange,
+                    padding: EdgeInsets.symmetric(horizontal: 5, vertical: 12),
+                    textStyle: TextStyle(fontSize: 16),
+                  ),
                 ),
                 SizedBox(width: 16),
                 desbloqueado
-                    ? ElevatedButton(
+                    ? ElevatedButton.icon(
                         onPressed: irAlSiguienteJuego,
+                        icon: Icon(Icons.arrow_forward),
+                        label: Text('Siguiente juego'),
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green),
-                        child: Text('Siguiente juego'),
+                          backgroundColor: Colors.green,
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          textStyle: TextStyle(fontSize: 16),
+                        ),
                       )
                     : Opacity(
-                        opacity: 0.4,
+                        opacity: 0.5,
                         child: IgnorePointer(
-                          child: ElevatedButton(
+                          child: ElevatedButton.icon(
                             onPressed: () {},
+                            icon: Icon(Icons.lock),
+                            label: Text('Siguiente juego'),
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.lock),
-                                SizedBox(width: 8),
-                                Text('Siguiente juego'),
-                              ],
+                              backgroundColor: Colors.grey,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 12),
+                              textStyle: TextStyle(fontSize: 16),
                             ),
                           ),
                         ),
@@ -138,13 +149,23 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes2> {
         Container(
           width: 100,
           height: 100,
-          margin: EdgeInsets.only(bottom: 8),
+          margin: EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
             color: Colors.white,
+            border: Border.all(color: Colors.orange.shade200),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.orange.withOpacity(0.2),
+                blurRadius: 8,
+                offset: Offset(2, 4),
+              ),
+            ],
           ),
-          child: Image.asset(path, fit: BoxFit.contain),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.asset(path, fit: BoxFit.contain),
+          ),
         ),
         DragTarget<String>(
           onAccept: (data) {
@@ -161,13 +182,17 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes2> {
                 ? respuestasUsuarioIzq[preguntaIndex]
                 : respuestasUsuarioDer[preguntaIndex];
 
-            return Container(
+            return AnimatedContainer(
+              duration: Duration(milliseconds: 300),
               width: 100,
               height: 40,
               decoration: BoxDecoration(
-                color: Colors.green[50],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.green),
+                color: value != null ? Colors.green[100] : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: value != null ? Colors.green : Colors.grey,
+                  width: 2,
+                ),
               ),
               alignment: Alignment.center,
               child: Text(value ?? 'Arrastra aquí'),
@@ -184,7 +209,11 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes2> {
       height: 140,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.orange[100],
+        gradient: LinearGradient(
+          colors: [Colors.orange.shade200, Colors.deepOrange.shade100],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         border: Border.all(color: Colors.deepOrange, width: 3),
         boxShadow: [
           BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(2, 2))
@@ -192,8 +221,8 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes2> {
       ),
       child: Center(
         child: Column(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: opciones.map((palabra) {
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: opciones.map((palabra) {
             return Draggable<String>(
               data: palabra,
               feedback: Material(
@@ -201,7 +230,7 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes2> {
                 child: palabraSimple(palabra, dragging: true),
               ),
               childWhenDragging:
-                  Opacity(opacity: 0.3, child: palabraSimple(palabra)),
+                  Opacity(opacity: 0.4, child: palabraSimple(palabra)),
               child: palabraSimple(palabra),
             );
           }).toList(),
@@ -211,29 +240,14 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes2> {
   }
 
   Widget palabraSimple(String palabra, {bool dragging = false}) {
-    return Text(
-      palabra,
-      style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-        color: dragging ? Colors.orange[900] : Colors.black,
-      ),
-    );
-  }
-}
-
-// Ejemplo de la siguiente pantalla (Juego 2)
-class Juego_2 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Juego 2'),
-      ),
-      body: Center(
-        child: Text(
-          'Aquí va el contenido del segundo juego 🎯',
-          style: TextStyle(fontSize: 20),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Text(
+        palabra,
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: dragging ? Colors.deepOrange : Colors.black87,
         ),
       ),
     );

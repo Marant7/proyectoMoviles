@@ -121,50 +121,82 @@ class _JuegoSilabaFinalState extends State<JuegoSilabaFinal> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Juego: Completa la sílaba final')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 20,
-              runSpacing: 20,
-              children: List.generate(data.length, (index) => buildImagen(index)),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('🧩 Juego: Completa la Sílabas Final'),
+      backgroundColor: Colors.deepOrange,
+    ),
+    body: SingleChildScrollView(  // Hacemos el body desplazable
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          
+          SizedBox(height: 24),
+
+          // Imágenes y targets para arrastrar
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 20,
+            runSpacing: 20,
+            children: List.generate(data.length, (index) => buildImagen(index)),
+          ),
+
+          SizedBox(height: 24),
+
+          // Opciones de sílabas para arrastrar
+          Text(
+            'Opciones:',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.deepOrange,
             ),
-            SizedBox(height: 24),
-            Text('Opciones:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 12),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              alignment: WrapAlignment.center,
-              children: alternativas.map(buildAlternativa).toList(),
+          ),
+          SizedBox(height: 12),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            alignment: WrapAlignment.center,
+            children: alternativas.map(buildAlternativa).toList(),
+          ),
+
+          SizedBox(height: 32),
+
+          // Botón para verificar respuestas
+          ElevatedButton(
+            onPressed: verificar,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.deepOrange, // Color del botón
+              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+              textStyle: TextStyle(fontSize: 18),
             ),
-            SizedBox(height: 32),
+            child: Text('Verificar respuestas'),
+          ),
+
+          SizedBox(height: 16),
+
+          // Botón de siguiente juego
+          if (desbloqueado)
             ElevatedButton(
-              onPressed: verificar,
-              child: Text('Verificar respuestas'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => JuegoSilabas()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green, // Color de éxito
+                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                textStyle: TextStyle(fontSize: 18),
+              ),
+              child: Text('Siguiente juego'),
             ),
-            SizedBox(height: 16),
-            desbloqueado
-                ? ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => JuegoSilabas()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                    child: Text('Siguiente juego'),
-                  )
-                : Container(),
-          ],
-        ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }

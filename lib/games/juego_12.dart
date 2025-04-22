@@ -85,56 +85,97 @@ void seleccionarTarjeta(int index) {
   void desbloquear() => setState(() => bloqueado = false);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Juego de Memoria - 6 Pares')),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Expanded(
-              child: GridView.builder(
-                itemCount: tarjetas.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3, // 3 columnas
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                itemBuilder: (context, index) {
-                  final tarjeta = tarjetas[index];
-                  return GestureDetector(
-                    onTap: () => seleccionarTarjeta(index),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: Colors.grey[200],
-                        border: Border.all(color: Colors.blue),
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('🧠 Juego de Memoria - 6 Pares'),
+      backgroundColor: Colors.deepPurple,
+    ),
+    body: Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Text(
+            'Encuentra las parejas correctas',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.deepPurple,
+            ),
+          ),
+          SizedBox(height: 20),
+          Expanded(
+            child: GridView.builder(
+              itemCount: tarjetas.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+              ),
+              itemBuilder: (context, index) {
+                final tarjeta = tarjetas[index];
+                return GestureDetector(
+                  onTap: () => seleccionarTarjeta(index),
+                  child: AnimatedContainer(
+                    duration: Duration(milliseconds: 300),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      color: tarjeta.descubierta || tarjeta.emparejada
+                          ? Colors.white
+                          : Colors.deepPurple[100],
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26,
+                          blurRadius: 4,
+                          offset: Offset(2, 2),
+                        ),
+                      ],
+                      border: Border.all(
+                        color: tarjeta.emparejada ? Colors.green : Colors.deepPurple,
+                        width: 2,
                       ),
-                      child: tarjeta.descubierta || tarjeta.emparejada
-                          ? Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Image.asset(tarjeta.imagen, fit: BoxFit.contain),
-                            )
-                          : Center(child: Icon(Icons.question_mark, size: 36, color: Colors.grey)),
                     ),
-                  );
-                },
+                    child: tarjeta.descubierta || tarjeta.emparejada
+                        ? Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Image.asset(
+                              tarjeta.imagen,
+                              fit: BoxFit.contain,
+                            ),
+                          )
+                        : Center(
+                            child: Icon(Icons.help_outline, size: 36, color: Colors.deepPurple),
+                          ),
+                  ),
+                );
+              },
+            ),
+          ),
+          if (completado) ...[
+            SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => JuegoSilabas()),
+                );
+              },
+              icon: Icon(Icons.arrow_forward),
+              label: Text('Siguiente juego'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                textStyle: TextStyle(fontSize: 16),
               ),
             ),
-            if (completado)
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => JuegoSilabas()));
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                child: Text('Siguiente juego'),
-              ),
           ],
-        ),
+        ],
       ),
-    );
-  }
+    ),
+  );
 }
+  
+  }
 
 class _Tarjeta {
   final String imagen;

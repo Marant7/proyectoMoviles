@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_silabas.dart';
 import 'package:flutter_jueguito/mensaje/celebracion.dart';
 
-
 class JuegoRimasImagen extends StatefulWidget {
   @override
   _JuegoRimasImagenState createState() => _JuegoRimasImagenState();
@@ -63,18 +62,20 @@ class _JuegoRimasImagenState extends State<JuegoRimasImagen> {
           height: 100,
           child: Image.asset(img['path'], fit: BoxFit.contain),
         ),
-        SizedBox(height: 6),
+        SizedBox(height: 8),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.blue),
             borderRadius: BorderRadius.circular(12),
             color: Colors.blue[50],
           ),
-          child: Text(img['nombre'],
-              style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text(
+            img['nombre'],
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
         ),
-        SizedBox(height: 6),
+        SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(2, (pos) => buildDropZone(index, pos)),
@@ -86,7 +87,7 @@ class _JuegoRimasImagenState extends State<JuegoRimasImagen> {
   Widget buildDropZone(int imgIndex, int posIndex) {
     final palabra = respuestasUsuario[imgIndex]![posIndex];
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: DragTarget<String>(
         onAccept: (data) {
           setState(() {
@@ -95,15 +96,19 @@ class _JuegoRimasImagenState extends State<JuegoRimasImagen> {
         },
         builder: (context, candidateData, rejectedData) {
           return Container(
-            width: 60,
-            height: 40,
+            width: 70,
+            height: 45,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: palabra != null ? Colors.orange[100] : Colors.white,
               border: Border.all(color: Colors.orange),
               borderRadius: BorderRadius.circular(8),
+              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)],
             ),
-            child: Text(palabra ?? '', style: TextStyle(fontSize: 14)),
+            child: Text(
+              palabra ?? '',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
           );
         },
       ),
@@ -130,8 +135,12 @@ class _JuegoRimasImagenState extends State<JuegoRimasImagen> {
         color: dragging ? Colors.orange[300] : Colors.orange[100],
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.orange),
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)],
       ),
-      child: Text(palabra, style: TextStyle(fontSize: 16)),
+      child: Text(
+        palabra,
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -161,8 +170,14 @@ class _JuegoRimasImagenState extends State<JuegoRimasImagen> {
                 ],
               ),
               SizedBox(height: 24),
-              Text('Rimas:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                'Rimas:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.deepOrange,
+                ),
+              ),
               SizedBox(height: 12),
               Wrap(
                 spacing: 12,
@@ -174,6 +189,14 @@ class _JuegoRimasImagenState extends State<JuegoRimasImagen> {
               ElevatedButton(
                 onPressed: verificar,
                 child: Text('Verificar respuestas'),
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                  textStyle: TextStyle(fontSize: 18),
+                  backgroundColor: Colors.orange[700],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
               ),
               SizedBox(height: 12),
               if (desbloqueado)
@@ -184,7 +207,14 @@ class _JuegoRimasImagenState extends State<JuegoRimasImagen> {
                       MaterialPageRoute(builder: (_) => JuegoSilabas()),
                     );
                   },
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+                    textStyle: TextStyle(fontSize: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   child: Text('Siguiente juego'),
                 ),
             ],

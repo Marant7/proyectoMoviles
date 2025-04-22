@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_silabas.dart';
 import 'package:flutter_jueguito/mensaje/celebracion.dart';
 
-
 class JuegoSilabasPorNumero extends StatefulWidget {
   @override
   _JuegoSilabasPorNumeroState createState() => _JuegoSilabasPorNumeroState();

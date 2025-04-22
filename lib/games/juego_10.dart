@@ -135,46 +135,68 @@ class _JuegoFrasesAImagenState extends State<JuegoFrasesAImagen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Arrastra la frase a la imagen')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Wrap(
-              spacing: 20,
-              runSpacing: 20,
-              alignment: WrapAlignment.center,
-              children: List.generate(3, (i) => buildImagenConDrop(i)),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Frases:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            ...frases.map(buildFraseDraggable),
-            SizedBox(height: 20),
-            Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: [
-    ElevatedButton(
-      onPressed: verificar,
-      child: Text('Verificar respuestas'),
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Arrastra la frase a la imagen'),
+      backgroundColor: Colors.deepPurple,
     ),
-    SizedBox(width: 16),
-    if (desbloqueado)
-      ElevatedButton(
-        onPressed: irAlSiguienteJuego,
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-        child: Text('Siguiente nivel'),
+    body: SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Relaciona cada imagen con su frase correspondiente',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 20),
+          Wrap(
+            spacing: 20,
+            runSpacing: 20,
+            alignment: WrapAlignment.center,
+            children: List.generate(data.length, buildImagenConDrop),
+          ),
+          Divider(height: 40),
+          Text(
+            'Frases disponibles:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          ...frases.map(buildFraseDraggable),
+          SizedBox(height: 30),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton.icon(
+                onPressed: verificar,
+                icon: Icon(Icons.check_circle),
+                label: Text('Verificar'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 169, 144, 211),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                ),
+              ),
+              SizedBox(width: 20),
+              desbloqueado
+                  ? ElevatedButton.icon(
+                      onPressed: irAlSiguienteJuego,
+                      icon: Icon(Icons.arrow_forward),
+                      label: Text('Siguiente'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      ),
+                    )
+                  : SizedBox.shrink(),
+            ],
+          ),
+        ],
       ),
-  ],
-),
+    ),
+  );
+}
 
-          ],
-        ),
-      ),
-    );
-  }
 }

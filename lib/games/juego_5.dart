@@ -4,6 +4,8 @@ import 'package:flutter_jueguito/games/juego_6.dart';
 import 'package:flutter_jueguito/mensaje/celebracion.dart';
 import 'juego_4.dart'; // ⚠️ Asegúrate de que este archivo exista
 
+// Importaciones iguales que antes...
+
 class JuegoNumerosImagen extends StatefulWidget {
   @override
   State<JuegoNumerosImagen> createState() => _JuegoNumerosImagenState();
@@ -34,33 +36,32 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
   bool desbloqueado = false;
 
   void verificarRespuestas() {
-  bool todoCorrecto = true;
+    bool todoCorrecto = true;
+    for (int i = 0; i < imagenes.length; i++) {
+      if (respuestasUsuario[i] != imagenes[i]['respuesta']) {
+        todoCorrecto = false;
+        break;
+      }
+    }
 
-  for (int i = 0; i < imagenes.length; i++) {
-    final correcta = imagenes[i]['respuesta'];
-    final usuario = respuestasUsuario[i];
-    if (usuario != correcta) {
-      todoCorrecto = false;
-      break;
+    setState(() {
+      desbloqueado = todoCorrecto;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(todoCorrecto
+            ? '¡Todas las respuestas son correctas! 🎉'
+            : 'Hay respuestas incorrectas ❌'),
+      ),
+    );
+
+    if (todoCorrecto) {
+      Future.delayed(Duration(milliseconds: 500), () {
+        Celebracion.mostrar(context);
+      });
     }
   }
-
-  setState(() {
-    desbloqueado = todoCorrecto;
-  });
-
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-    content: Text(todoCorrecto
-        ? '¡Todas las respuestas son correctas! 🎉'
-        : 'Hay respuestas incorrectas ❌'),
-  ));
-
-  if (todoCorrecto) {
-    Future.delayed(Duration(milliseconds: 500), () {
-      Celebracion.mostrar(context);
-    });
-  }
-}
 
   void irAlSiguienteJuego() {
     Navigator.push(
@@ -72,7 +73,10 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Juego: Arrastra el número correcto')),
+      appBar: AppBar(
+        title: Text('Juego: Arrastra el número correcto'),
+        backgroundColor: Colors.deepPurple,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -80,72 +84,44 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
             Expanded(
               child: Row(
                 children: [
-                  Expanded(
-                    child: Column(
-                      children: imagenes.sublist(0, 3).asMap().entries.map((entry) {
-                        return buildImagen(entry.key, entry.value['path']);
-                      }).toList(),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                    padding: const EdgeInsets.only(left: 25), // Aumenta este valor si quieres más desplazamiento
-                    child: Column(
-                      children: opciones.map((op) {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          child: Draggable<int>(
-                            data: op['numero'],
-                            feedback: Material(
-                              color: Colors.transparent,
-                              child: numeroEnCirculo(op['numero'], dragging: true),
-                            ),
-                            childWhenDragging: Opacity(
-                              opacity: 0.3,
-                              child: numeroTexto(op['numero'], op['texto']),
-                            ),
-                            child: numeroTexto(op['numero'], op['texto']),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      children: imagenes.sublist(3, 6).asMap().entries.map((entry) {
-                        return buildImagen(entry.key + 3, entry.value['path']);
-                      }).toList(),
-                    ),
-                  ),
+                  Expanded(child: buildImageColumn(imagenes.sublist(0, 3), 0)),
+                  Expanded(child: buildOpciones()),
+                  Expanded(child: buildImageColumn(imagenes.sublist(3), 3)),
                 ],
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: verificarRespuestas,
-              child: Text('Verificar respuestas'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 162, 141, 198),
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+              child: Text('Verificar respuestas', style: TextStyle(fontSize: 18)),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             desbloqueado
                 ? ElevatedButton(
                     onPressed: irAlSiguienteJuego,
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                    child: Text('Siguiente juego'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: Text('Siguiente juego', style: TextStyle(fontSize: 18)),
                   )
                 : Opacity(
                     opacity: 0.4,
                     child: IgnorePointer(
-                      child: ElevatedButton(
+                      child: ElevatedButton.icon(
                         onPressed: () {},
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.lock),
-                            SizedBox(width: 8),
-                            Text('Siguiente juego'),
-                          ],
-                        ),
+                        icon: Icon(Icons.lock),
+                        label: Text('Siguiente juego'),
                       ),
                     ),
                   ),
@@ -155,9 +131,18 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
     );
   }
 
+  Widget buildImageColumn(List<Map<String, dynamic>> lista, int offset) {
+    return Column(
+      children: lista.asMap().entries.map((entry) {
+        int index = offset + entry.key;
+        return buildImagen(index, entry.value['path']);
+      }).toList(),
+    );
+  }
+
   Widget buildImagen(int index, String path) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Column(
         children: [
           Container(
@@ -165,10 +150,17 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
             height: 100,
             margin: EdgeInsets.only(bottom: 8),
             decoration: BoxDecoration(
+              color: Colors.white,
               border: Border.all(color: Colors.grey.shade300),
               borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2, 2)),
+              ],
             ),
-            child: Image.asset(path, fit: BoxFit.contain),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(path, fit: BoxFit.contain),
+            ),
           ),
           DragTarget<int>(
             onAccept: (numero) {
@@ -177,11 +169,12 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
               });
             },
             builder: (context, candidateData, rejectedData) {
-              return Container(
-                width: 40,
-                height: 40,
+              return AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Colors.blue[50],
                   border: Border.all(color: Colors.blue, width: 2),
                   shape: BoxShape.circle,
                 ),
@@ -191,7 +184,7 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
                         respuestasUsuario[index].toString(),
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       )
-                    : null,
+                    : Text("?", style: TextStyle(fontSize: 20, color: Colors.grey)),
               );
             },
           )
@@ -200,22 +193,46 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
     );
   }
 
+  Widget buildOpciones() {
+    return SingleChildScrollView(
+      child: Column(
+        children: opciones.map((op) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Draggable<int>(
+              data: op['numero'],
+              feedback: Material(
+                color: Colors.transparent,
+                child: numeroEnCirculo(op['numero'], dragging: true),
+              ),
+              childWhenDragging: Opacity(
+                opacity: 0.3,
+                child: numeroTexto(op['numero'], op['texto']),
+              ),
+              child: numeroTexto(op['numero'], op['texto']),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   Widget numeroTexto(int numero, String texto) {
     return Row(
       children: [
         numeroEnCirculo(numero),
-        SizedBox(width: 8),
-        Text(texto, style: TextStyle(fontSize: 16)),
+        const SizedBox(width: 12),
+        Expanded(child: Text(texto, style: TextStyle(fontSize: 16))),
       ],
     );
   }
 
   Widget numeroEnCirculo(int numero, {bool dragging = false}) {
     return Container(
-      width: 32,
-      height: 32,
+      width: 36,
+      height: 36,
       decoration: BoxDecoration(
-        color: dragging ? Colors.blue[200] : Colors.blue[100],
+        color: dragging ? Colors.blue[300] : Colors.blue[100],
         shape: BoxShape.circle,
         border: Border.all(color: Colors.blue),
       ),

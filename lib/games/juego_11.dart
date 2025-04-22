@@ -71,51 +71,57 @@ class _Juego11State extends State<Juego11> {
   }
 
   Widget buildImagenConDrop(int index) {
-    return Column(
-      children: [
-        Container(
-          width: 90,
-          height: 90,
-          margin: EdgeInsets.all(8),
-          decoration: BoxDecoration(
-  borderRadius: BorderRadius.circular(8), // bordes redondeados
-  border: Border.all(color: Colors.blue),
-  color: respuestas[index] != null ? Colors.blue[100] : Colors.transparent,
-),
+  return Column(
+    children: [
+      Container(
+        width: 120,
+        height: 120,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 6,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Image.asset(imagenes[index], fit: BoxFit.cover),
+        ),
+      ),
+      SizedBox(height: 8),
+      DragTarget<String>(
+        onAccept: (data) {
+          setState(() => respuestas[index] = data);
+        },
+        builder: (context, candidateData, rejectedData) {
+          return Container(
+            width: 130,
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: respuestas[index] != null ? Colors.blue[100] : Colors.grey[200],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              respuestas[index] ?? 'Arrastra aquí',
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          );
+        },
+      ),
+    ],
+  );
+}
 
-          child: Image.asset(imagenes[index], fit: BoxFit.contain),
-        ),
-       DragTarget<String>(
-  onAccept: (data) {
-    setState(() {
-      respuestas[index] = data;
-    });
-  },
-  builder: (context, candidateData, rejectedData) {
-    return Container(
-      width: 100,
-      height: 40,
-      margin: EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.blue),
-        color: respuestas[index] != null ? Colors.blue[100] : Colors.transparent,
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        respuestas[index] ?? '',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    );
-  },
-),
-      ],
-    );
-  }
 
   List<Widget> buildAlternativas(List<String> opciones) {
     return opciones.map((palabra) {
@@ -145,73 +151,73 @@ class _Juego11State extends State<Juego11> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Juego: Arrastra la palabra a la imagen')),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text('Asocia la palabra con la imagen correcta',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 16),
-            Wrap(
-              spacing: 10,
-              runSpacing: 5,
-              alignment: WrapAlignment.center,
-              children: List.generate(
-                imagenes.length,
-                (index) => buildImagenConDrop(index),
-              ),
-            ),
-            SizedBox(height: 12),
-            Text('Alternativas',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 16),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              alignment: WrapAlignment.center,
-              children: buildAlternativas(alternativas),
-            ),
-            SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: verificar,
-                  child: Text('Verificar respuestas'),
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Juego: Palabra e imagen'),
+      backgroundColor: Colors.deepPurple,
+    ),
+    body: SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text(
+            'Asocia cada palabra con su imagen correspondiente',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 20),
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            alignment: WrapAlignment.center,
+            children: List.generate(imagenes.length, buildImagenConDrop),
+          ),
+          Divider(height: 40),
+          Text(
+            'Arrastra una palabra:',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            alignment: WrapAlignment.center,
+            children: buildAlternativas(alternativas),
+          ),
+          SizedBox(height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton.icon(
+                onPressed: verificar,
+                icon: Icon(Icons.check),
+                label: Text('Verificar'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 166, 146, 201),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 ),
-                SizedBox(width: 16),
-                desbloqueado
-                    ? ElevatedButton(
-                        onPressed: irAlSiguienteJuego,
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                        child: Text('Siguiente juego'),
-                      )
-                    : Opacity(
-                        opacity: 0.4,
-                        child: IgnorePointer(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.lock),
-                                SizedBox(width: 8),
-                                Text('Siguiente juego'),
-                              ],
-                            ),
-                          ),
-                        ),
+              ),
+              SizedBox(width: 16),
+              desbloqueado
+                  ? ElevatedButton.icon(
+                      onPressed: irAlSiguienteJuego,
+                      icon: Icon(Icons.arrow_forward),
+                      label: Text('Siguiente'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       ),
-              ],
-            ),
-          ],
-        ),
+                    )
+                  : SizedBox.shrink(),
+            ],
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
