@@ -32,24 +32,23 @@ class _JuegoDragDrop2State extends State<JuegoDragDrop3> {
   bool desbloqueado = false;
 
   void verificar() {
-  bool grupo1Correcto = grupo1.every((img) => img.respuestaUsuario == img.respuestaCorrecta);
-  bool grupo2Correcto = grupo2.every((img) => img.respuestaUsuario == img.respuestaCorrecta);
+    bool grupo1Correcto = grupo1.every((img) => img.respuestaUsuario == img.respuestaCorrecta);
+    bool grupo2Correcto = grupo2.every((img) => img.respuestaUsuario == img.respuestaCorrecta);
 
-  bool todoBien = grupo1Correcto && grupo2Correcto;
+    bool todoBien = grupo1Correcto && grupo2Correcto;
 
-  setState(() {
-    desbloqueado = todoBien;
-  });
+    setState(() {
+      desbloqueado = todoBien;
+    });
 
-  if (todoBien) {
-    Celebracion.mostrar(context); // 🎉 Mostrar la celebración
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Hay respuestas incorrectas ❌'),
-    ));
+    if (todoBien) {
+      Celebracion.mostrar(context); // 🎉 Mostrar la celebración
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Hay respuestas incorrectas ❌'),
+      ));
+    }
   }
-}
-
 
   void irAlSiguienteJuego() {
     Navigator.push(
@@ -59,26 +58,39 @@ class _JuegoDragDrop2State extends State<JuegoDragDrop3> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Juego: Arrastra debajo de la imagen')),
-      body: SingleChildScrollView(
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Juego: Arrastra debajo de la imagen'),
+      backgroundColor: Colors.blueAccent,
+    ),
+    body: Container(
+      decoration: BoxDecoration(
+        color: Colors.blue[50], // Puedes cambiar el color aquí para ajustarlo a tus preferencias
+      ),
+      child: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
           children: [
-            Text('Grupo 1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            // El contenido del juego va aquí (por ejemplo, los grupos de imágenes y botones)
+            Text('Grupo 1', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
             buildGrupo(grupo1, opcionesGrupo1),
 
             SizedBox(height: 32),
 
-            Text('Grupo 2', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text('Grupo 2', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
             buildGrupo(grupo2, opcionesGrupo2),
 
             SizedBox(height: 30),
 
             ElevatedButton(
               onPressed: verificar,
-              child: Text('Verificar respuestas'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrangeAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                padding: EdgeInsets.symmetric(vertical: 14, horizontal: 32),
+              ),
+              child: Text('Verificar respuestas', style: TextStyle(fontSize: 18)),
             ),
 
             SizedBox(height: 10),
@@ -86,21 +98,29 @@ class _JuegoDragDrop2State extends State<JuegoDragDrop3> {
             desbloqueado
                 ? ElevatedButton(
                     onPressed: irAlSiguienteJuego,
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                    child: Text('Siguiente juego'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      padding: EdgeInsets.symmetric(vertical: 14, horizontal: 32),
+                    ),
+                    child: Text('Siguiente juego', style: TextStyle(fontSize: 18)),
                   )
                 : Opacity(
                     opacity: 0.4,
                     child: IgnorePointer(
                       child: ElevatedButton(
                         onPressed: () {},
-                        style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 32),
+                        ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.lock),
+                            Icon(Icons.lock, color: Colors.white),
                             SizedBox(width: 8),
-                            Text('Siguiente juego'),
+                            Text('Siguiente juego', style: TextStyle(fontSize: 18)),
                           ],
                         ),
                       ),
@@ -109,8 +129,9 @@ class _JuegoDragDrop2State extends State<JuegoDragDrop3> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget buildGrupo(List<ImagenConRespuesta> imagenes, List<String> opciones) {
     return Column(
@@ -153,6 +174,7 @@ class _JuegoDragDrop2State extends State<JuegoDragDrop3> {
             border: Border.all(color: Colors.grey.shade300),
             borderRadius: BorderRadius.circular(12),
             color: Colors.white,
+            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(2, 2))], // Añadí sombra a las imágenes
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -174,10 +196,11 @@ class _JuegoDragDrop2State extends State<JuegoDragDrop3> {
                 color: Colors.green[50],
                 border: Border.all(color: Colors.green),
                 borderRadius: BorderRadius.circular(8),
+                boxShadow: [BoxShadow(color: Colors.green, blurRadius: 5)], // Añadí sombra sutil
               ),
               child: Text(
                 img.respuestaUsuario ?? 'Arrastra aquí',
-                style: TextStyle(fontSize: 13),
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
               ),
             );
           },
@@ -196,7 +219,7 @@ class _JuegoDragDrop2State extends State<JuegoDragDrop3> {
             ? [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(2, 2))]
             : [],
       ),
-      child: Text(palabra, style: TextStyle(fontSize: 16)),
+      child: Text(palabra, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
     );
   }
 }
