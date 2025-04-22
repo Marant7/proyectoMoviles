@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_10.dart';
 import 'package:flutter_jueguito/games/juego_silabas.dart';
+import 'package:flutter_jueguito/mensaje/celebracion.dart';
 
 class JuegoConDosImagenes2 extends StatefulWidget {
   @override
@@ -34,24 +35,30 @@ class _JuegoConDosImagenesState extends State<JuegoConDosImagenes2> {
   bool desbloqueado = false;
 
   void verificar() {
-    bool correcto = true;
+  bool correcto = true;
 
-    for (int i = 0; i < preguntas.length; i++) {
-      final r = preguntas[i]['respuestas'];
-      if (respuestasUsuarioIzq[i] != r[0] || respuestasUsuarioDer[i] != r[1]) {
-        correcto = false;
-        break;
-      }
+  for (int i = 0; i < preguntas.length; i++) {
+    final r = preguntas[i]['respuestas'];
+    if (respuestasUsuarioIzq[i] != r[0] || respuestasUsuarioDer[i] != r[1]) {
+      correcto = false;
+      break;
     }
-
-    setState(() => desbloqueado = correcto);
-
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(correcto
-          ? '¡Todas las respuestas son correctas! 🎉'
-          : 'Hay respuestas incorrectas ❌'),
-    ));
   }
+
+  setState(() => desbloqueado = correcto);
+
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(correcto
+        ? '¡Todas las respuestas son correctas! 🎉'
+        : 'Hay respuestas incorrectas ❌'),
+  ));
+
+  // Si las respuestas son correctas, mostramos la celebración
+  if (correcto) {
+    Celebracion.mostrar(context);
+  }
+}
+
 
   void irAlSiguienteJuego() {
     Navigator.push(

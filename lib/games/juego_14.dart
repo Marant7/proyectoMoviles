@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_silabas.dart';
+import 'package:flutter_jueguito/mensaje/celebracion.dart';
+
 
 class JuegoRimasImagen extends StatefulWidget {
   @override
@@ -15,10 +17,10 @@ class _JuegoRimasImagenState extends State<JuegoRimasImagen> {
   ];
 
   final List<String> alternativas = [
-  'nata', 'lino', 'pata',
-  'mala', 'sala', 'mapa',
-  'papa', 'tino'
-];
+    'nata', 'lino', 'pata',
+    'mala', 'sala', 'mapa',
+    'papa', 'tino'
+  ];
 
   Map<int, List<String?>> respuestasUsuario = {
     0: [null, null],
@@ -41,11 +43,14 @@ class _JuegoRimasImagenState extends State<JuegoRimasImagen> {
 
     setState(() => desbloqueado = correcto);
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(correcto
-          ? '¡Rimas correctas! 🎉'
-          : 'Hay errores en las rimas ❌'),
-    ));
+    if (correcto) {
+      // Mostrar la celebración al finalizar correctamente
+      Celebracion.mostrar(context);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Hay errores en las rimas ❌'),
+      ));
+    }
   }
 
   Widget buildImagen(int index) {

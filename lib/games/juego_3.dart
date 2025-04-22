@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_4.dart';
-
+import '../mensaje/celebracion.dart';
 
 class ImagenConRespuesta {
   final String imagePath;
@@ -32,21 +32,24 @@ class _JuegoDragDrop2State extends State<JuegoDragDrop3> {
   bool desbloqueado = false;
 
   void verificar() {
-    bool grupo1Correcto = grupo1.every((img) => img.respuestaUsuario == img.respuestaCorrecta);
-    bool grupo2Correcto = grupo2.every((img) => img.respuestaUsuario == img.respuestaCorrecta);
+  bool grupo1Correcto = grupo1.every((img) => img.respuestaUsuario == img.respuestaCorrecta);
+  bool grupo2Correcto = grupo2.every((img) => img.respuestaUsuario == img.respuestaCorrecta);
 
-    bool todoBien = grupo1Correcto && grupo2Correcto;
+  bool todoBien = grupo1Correcto && grupo2Correcto;
 
-    setState(() {
-      desbloqueado = todoBien;
-    });
+  setState(() {
+    desbloqueado = todoBien;
+  });
 
+  if (todoBien) {
+    Celebracion.mostrar(context); // 🎉 Mostrar la celebración
+  } else {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(todoBien
-          ? '¡Todas las respuestas son correctas! 🎉'
-          : 'Hay respuestas incorrectas ❌'),
+      content: Text('Hay respuestas incorrectas ❌'),
     ));
   }
+}
+
 
   void irAlSiguienteJuego() {
     Navigator.push(

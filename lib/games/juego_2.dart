@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_3.dart';
+import 'package:flutter_jueguito/mensaje/celebracion.dart';
 
 class Question {
   final String imagePath;
@@ -46,28 +47,33 @@ class _JuegoDragDropState extends State<JuegoDragDrop2> {
   bool isUnlocked = false;
 
   void checkAnswers() {
-    bool allCorrect = true;
-    for (int i = 0; i < questions.length; i++) {
-      if (userAnswers[i] != questions[i].answer) {
-        allCorrect = false;
-        break;
-      }
+  bool allCorrect = true;
+  for (int i = 0; i < questions.length; i++) {
+    if (userAnswers[i] != questions[i].answer) {
+      allCorrect = false;
+      break;
     }
-
-    setState(() {
-      isUnlocked = allCorrect;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          allCorrect
-              ? '¡Todas las respuestas son correctas! 🎉'
-              : 'Hay respuestas incorrectas ❌',
-        ),
-      ),
-    );
   }
+
+  setState(() {
+    isUnlocked = allCorrect;
+  });
+
+  if (allCorrect) {
+    Celebracion.mostrar(context); // 🎉 Muestra la celebración
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        allCorrect
+            ? '¡Todas las respuestas son correctas! 🎉'
+            : 'Hay respuestas incorrectas ❌',
+      ),
+    ),
+  );
+}
+
 
   void goToNextGame() {
     Navigator.push(context, MaterialPageRoute(builder: (_) => JuegoDragDrop3()));

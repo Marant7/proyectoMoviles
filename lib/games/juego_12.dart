@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter_jueguito/games/juego_silabas.dart';
+import 'package:flutter_jueguito/mensaje/celebracion.dart';
 
 class JuegoMemoriaParejas extends StatefulWidget {
   @override
@@ -44,38 +45,41 @@ class _JuegoMemoriaParejasState extends State<JuegoMemoriaParejas> {
     setState(() {});
   }
 
-  void seleccionarTarjeta(int index) {
-    if (bloqueado || tarjetas[index].descubierta || tarjetas[index].emparejada) return;
+void seleccionarTarjeta(int index) {
+  if (bloqueado || tarjetas[index].descubierta || tarjetas[index].emparejada) return;
 
-    setState(() {
-      tarjetas[index].descubierta = true;
-      seleccionadas.add(index);
+  setState(() {
+    tarjetas[index].descubierta = true;
+    seleccionadas.add(index);
+  });
+
+  if (seleccionadas.length == 2) {
+    bloquearTemporalmente();
+
+    Future.delayed(Duration(milliseconds: 800), () {
+      final idx1 = seleccionadas[0];
+      final idx2 = seleccionadas[1];
+
+      if (tarjetas[idx1].imagen == tarjetas[idx2].imagen) {
+        tarjetas[idx1].emparejada = true;
+        tarjetas[idx2].emparejada = true;
+      } else {
+        tarjetas[idx1].descubierta = false;
+        tarjetas[idx2].descubierta = false;
+      }
+
+      seleccionadas.clear();
+      desbloquear();
+
+      if (tarjetas.every((t) => t.emparejada)) {
+        setState(() => completado = true);
+        
+        // Mostrar la celebración cuando todas las tarjetas estén emparejadas
+        Celebracion.mostrar(context);
+      }
     });
-
-    if (seleccionadas.length == 2) {
-      bloquearTemporalmente();
-
-      Future.delayed(Duration(milliseconds: 800), () {
-        final idx1 = seleccionadas[0];
-        final idx2 = seleccionadas[1];
-
-        if (tarjetas[idx1].imagen == tarjetas[idx2].imagen) {
-          tarjetas[idx1].emparejada = true;
-          tarjetas[idx2].emparejada = true;
-        } else {
-          tarjetas[idx1].descubierta = false;
-          tarjetas[idx2].descubierta = false;
-        }
-
-        seleccionadas.clear();
-        desbloquear();
-
-        if (tarjetas.every((t) => t.emparejada)) {
-          setState(() => completado = true);
-        }
-      });
-    }
   }
+}
 
   void bloquearTemporalmente() => setState(() => bloqueado = true);
   void desbloquear() => setState(() => bloqueado = false);

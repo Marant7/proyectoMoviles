@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_7.dart';
 import 'package:flutter_jueguito/games/juego_8.dart';
+import 'package:flutter_jueguito/mensaje/celebracion.dart';
 
 class JuegoImagenTextoNumero extends StatefulWidget {
   @override
@@ -37,25 +38,30 @@ class _JuegoImagenTextoNumeroState extends State<JuegoImagenTextoNumero> {
   };
 
   void verificar() {
-    bool todasCorrectas = true;
+  bool todasCorrectas = true;
 
-    for (int i = 0; i < respuestasCorrectas.length; i++) {
-      if (respuestas[i] != respuestasCorrectas[i]) {
-        todasCorrectas = false;
-        break;
-      }
+  for (int i = 0; i < respuestasCorrectas.length; i++) {
+    if (respuestas[i] != respuestasCorrectas[i]) {
+      todasCorrectas = false;
+      break;
     }
-
-    setState(() {
-      desbloqueado = todasCorrectas;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(todasCorrectas
-          ? '¡Todas las respuestas son correctas! 🎉'
-          : 'Hay errores. Intenta nuevamente ❌'),
-    ));
   }
+
+  setState(() {
+    desbloqueado = todasCorrectas;
+  });
+
+  if (todasCorrectas) {
+    Celebracion.mostrar(context); // 🎉 Llama al popup con confeti
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(todasCorrectas
+        ? '¡Todas las respuestas son correctas! 🎉'
+        : 'Hay errores. Intenta nuevamente ❌'),
+  ));
+}
+
 
   void irAlSiguienteJuego() {
     Navigator.push(

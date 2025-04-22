@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_7.dart';
+import 'package:flutter_jueguito/mensaje/celebracion.dart';
 
 class JuegoArrastraNumero extends StatefulWidget {
   @override
@@ -34,39 +35,45 @@ class _JuegoArrastraNumeroState extends State<JuegoArrastraNumero> {
   bool desbloqueado = false;
 
   void verificar() {
-    bool todoCorrecto = true;
+  bool todoCorrecto = true;
 
-    for (var fila in data) {
-      final palabraCorrecta = fila['palabra'];
-      final numeroCorrecto = fila['numero'];
+  for (var fila in data) {
+    final palabraCorrecta = fila['palabra'];
+    final numeroCorrecto = fila['numero'];
 
-      if (respuestasUsuario[palabraCorrecta] != numeroCorrecto) {
+    if (respuestasUsuario[palabraCorrecta] != numeroCorrecto) {
+      todoCorrecto = false;
+      break;
+    }
+  }
+
+  for (var palabra in respuestasUsuario.keys) {
+    if (!data.any((d) => d['palabra'] == palabra)) {
+      if (respuestasUsuario[palabra] != null) {
         todoCorrecto = false;
         break;
       }
     }
-
-    for (var palabra in respuestasUsuario.keys) {
-      if (!data.any((d) => d['palabra'] == palabra)) {
-        if (respuestasUsuario[palabra] != null) {
-          todoCorrecto = false;
-          break;
-        }
-      }
-    }
-
-    setState(() => desbloqueado = todoCorrecto);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          todoCorrecto
-              ? '¡Todas las respuestas son correctas! 🎉'
-              : 'Hay errores. Intenta nuevamente ❌',
-        ),
-      ),
-    );
   }
+
+  setState(() => desbloqueado = todoCorrecto);
+
+  // Mostrar confeti si todo está correcto
+  if (todoCorrecto) {
+    Celebracion.mostrar(context); // <-- Aquí está el truco ✨
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        todoCorrecto
+            ? '¡Todas las respuestas son correctas! 🎉'
+            : 'Hay errores. Intenta nuevamente ❌',
+      ),
+    ),
+  );
+}
+
 
   void irAlSiguienteJuego() {
     Navigator.push(

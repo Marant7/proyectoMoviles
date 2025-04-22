@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_silabas.dart';
+import 'package:flutter_jueguito/mensaje/celebracion.dart';
 
 class JuegoSilabaFinal extends StatefulWidget {
   @override
@@ -22,25 +23,30 @@ class _JuegoSilabaFinalState extends State<JuegoSilabaFinal> {
   bool desbloqueado = false;
 
   void verificar() {
-    bool todasCorrectas = true;
+  bool todasCorrectas = true;
 
-    for (int i = 0; i < data.length; i++) {
-      if (respuestasUsuario[i] != data[i]['respuesta']) {
-        todasCorrectas = false;
-        break;
-      }
+  for (int i = 0; i < data.length; i++) {
+    if (respuestasUsuario[i] != data[i]['respuesta']) {
+      todasCorrectas = false;
+      break;
     }
-
-    setState(() {
-      desbloqueado = todasCorrectas;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(todasCorrectas
-          ? '¡Correcto! Todas las sílabas coinciden 🎉'
-          : 'Hay errores, inténtalo de nuevo ❌'),
-    ));
   }
+
+  setState(() {
+    desbloqueado = todasCorrectas;
+  });
+
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(todasCorrectas
+        ? '¡Correcto! Todas las sílabas coinciden 🎉'
+        : 'Hay errores, inténtalo de nuevo ❌'),
+  ));
+
+  // Llamar a la celebración si todo es correcto
+  if (todasCorrectas) {
+    Celebracion.mostrar(context);
+  }
+}
 
   Widget buildImagen(int index) {
     final item = data[index];

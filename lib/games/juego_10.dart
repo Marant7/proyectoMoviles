@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_silabas.dart';
+import 'package:flutter_jueguito/mensaje/celebracion.dart';
 
 class JuegoFrasesAImagen extends StatefulWidget {
   @override
@@ -32,30 +33,35 @@ class _JuegoFrasesAImagenState extends State<JuegoFrasesAImagen> {
   Map<int, String?> respuestas = {}; // índice de imagen => frase asignada
   bool desbloqueado = false;
 
-  void verificar() {
-    bool todoBien = true;
+ void verificar() {
+  bool todoBien = true;
 
-    for (int i = 0; i < data.length; i++) {
-      if (respuestas[i] != data[i]['fraseCorrecta']) {
-        todoBien = false;
-        break;
-      }
+  for (int i = 0; i < data.length; i++) {
+    if (respuestas[i] != data[i]['fraseCorrecta']) {
+      todoBien = false;
+      break;
     }
-
-    setState(() {
-      desbloqueado = todoBien;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          todoBien
-              ? '¡Todas las frases son correctas! 🎉'
-              : 'Hay errores. Intenta de nuevo ❌',
-        ),
-      ),
-    );
   }
+
+  setState(() {
+    desbloqueado = todoBien;
+  });
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        todoBien
+            ? '¡Todas las frases son correctas! 🎉'
+            : 'Hay errores. Intenta de nuevo ❌',
+      ),
+    ),
+  );
+
+  // Mostrar celebración si las respuestas son correctas
+  if (todoBien) {
+    Celebracion.mostrar(context);
+  }
+}
 
   void irAlSiguienteJuego() {
     Navigator.push(context, MaterialPageRoute(builder: (_) => JuegoSilabas()));

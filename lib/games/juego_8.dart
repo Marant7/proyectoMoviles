@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_9.dart';
+import 'package:flutter_jueguito/mensaje/celebracion.dart';
 
 class JuegoNumeroATexto extends StatefulWidget {
   @override
@@ -40,34 +41,38 @@ class _JuegoNumeroATextoState extends State<JuegoNumeroATexto> {
   bool desbloqueado = false;
 
   void verificar() {
-    bool todasCorrectas = true;
+  bool todasCorrectas = true;
 
-    for (var palabra in numerosConPalabra.values) {
-      int? numeroAsignado = respuestasUsuario[palabra];
-      if (numeroAsignado == null ||
-          numerosConPalabra[numeroAsignado] != palabra) {
-        todasCorrectas = false;
-        break;
-      }
-    }
-
-    if (respuestasUsuario['compás'] != null ||
-        respuestasUsuario['teléfono'] != null) {
+  for (var palabra in numerosConPalabra.values) {
+    int? numeroAsignado = respuestasUsuario[palabra];
+    if (numeroAsignado == null ||
+        numerosConPalabra[numeroAsignado] != palabra) {
       todasCorrectas = false;
+      break;
     }
-
-    setState(() => desbloqueado = todasCorrectas);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          todasCorrectas
-              ? '¡Todas las respuestas son correctas! 🎉'
-              : 'Hay errores. Intenta nuevamente ❌',
-        ),
-      ),
-    );
   }
+
+  if (respuestasUsuario['compás'] != null ||
+      respuestasUsuario['teléfono'] != null) {
+    todasCorrectas = false;
+  }
+
+  setState(() => desbloqueado = todasCorrectas);
+
+  if (todasCorrectas) {
+    Celebracion.mostrar(context); // 🎉 Mostrar confeti
+  }
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        todasCorrectas
+            ? '¡Todas las respuestas son correctas! 🎉'
+            : 'Hay errores. Intenta nuevamente ❌',
+      ),
+    ),
+  );
+}
 
   void irAlSiguienteJuego() {
     Navigator.push(

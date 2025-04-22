@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_4.dart';
 import 'package:flutter_jueguito/games/juego_6.dart';
+import 'package:flutter_jueguito/mensaje/celebracion.dart';
 import 'juego_4.dart'; // ⚠️ Asegúrate de que este archivo exista
 
 class JuegoNumerosImagen extends StatefulWidget {
@@ -33,27 +34,33 @@ class _JuegoNumerosImagenState extends State<JuegoNumerosImagen> {
   bool desbloqueado = false;
 
   void verificarRespuestas() {
-    bool todoCorrecto = true;
+  bool todoCorrecto = true;
 
-    for (int i = 0; i < imagenes.length; i++) {
-      final correcta = imagenes[i]['respuesta'];
-      final usuario = respuestasUsuario[i];
-      if (usuario != correcta) {
-        todoCorrecto = false;
-        break;
-      }
+  for (int i = 0; i < imagenes.length; i++) {
+    final correcta = imagenes[i]['respuesta'];
+    final usuario = respuestasUsuario[i];
+    if (usuario != correcta) {
+      todoCorrecto = false;
+      break;
     }
-
-    setState(() {
-      desbloqueado = todoCorrecto;
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(todoCorrecto
-          ? '¡Todas las respuestas son correctas! 🎉'
-          : 'Hay respuestas incorrectas ❌'),
-    ));
   }
+
+  setState(() {
+    desbloqueado = todoCorrecto;
+  });
+
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    content: Text(todoCorrecto
+        ? '¡Todas las respuestas son correctas! 🎉'
+        : 'Hay respuestas incorrectas ❌'),
+  ));
+
+  if (todoCorrecto) {
+    Future.delayed(Duration(milliseconds: 500), () {
+      Celebracion.mostrar(context);
+    });
+  }
+}
 
   void irAlSiguienteJuego() {
     Navigator.push(
