@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_jueguito/games/juego_silabas.dart';
+import 'package:flutter_jueguito/mensaje/celebracion.dart';
+
 
 class JuegoSilabasPorNumero extends StatefulWidget {
   @override
@@ -57,12 +59,19 @@ class _JuegoSilabasPorNumeroState extends State<JuegoSilabasPorNumero> {
         }
       }
     }
+
     setState(() => desbloqueado = correcto);
+
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(correcto
           ? '¡Todas las respuestas son correctas! 🎉'
           : 'Hay errores, inténtalo de nuevo ❌'),
     ));
+
+    // Si todas las respuestas son correctas, mostramos la celebración
+    if (correcto) {
+      Celebracion.mostrar(context);  // Llamamos a la celebración
+    }
   }
 
   Widget buildImagen(int index) {
