@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mis Juegos',
       debugShowCheckedModeBanner: false,
-      home: JuegoSilabasPorNumero(),
+      home: MenuPrincipal(),
     );
   }
 }
@@ -45,7 +45,10 @@ class MenuPrincipal extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) => JuegoDragDrop()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => JuegoDragDrop()),
+                );
               },
               child: Text('🧩 Juego Drag & Drop'),
             ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'juego_2.dart';
 
+import '../mensaje/celebracion.dart';
+
 class Question {
   final String imagePath;
   final List<String> options;
@@ -58,6 +60,10 @@ class _JuegoDragDropState extends State<JuegoDragDrop> {
       isUnlocked = allCorrect;
     });
 
+    if (allCorrect) {
+      Celebracion.mostrar(context); // <<<< Mostrar la celebración
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -70,7 +76,10 @@ class _JuegoDragDropState extends State<JuegoDragDrop> {
   }
 
   void goToNextGame() {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => JuegoDragDrop2()));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => JuegoDragDrop2()),
+    );
   }
 
   @override
